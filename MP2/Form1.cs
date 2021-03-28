@@ -10,11 +10,17 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using MP2.Models;
+using Exporter.Models;
+using System.Threading;
 
 namespace MP2
 {
     public partial class Form1 : Form
     {
+        private const string TRAIN_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\irisTrain.csv";
+        private const string TEST_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\irisTest.csv";
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
@@ -25,8 +31,12 @@ namespace MP2
             Settings
         }
 
-        private Color _bttnPressedColor;
-        private Color _bttnDefaultColor;
+        private readonly Color _bttnPressedColor;
+        private readonly Color _bttnDefaultColor;
+
+        private string _trainSetPath;
+        private string _testSetPath;
+        private string _outputSetPath;
 
         public Form1()
         {
@@ -35,19 +45,167 @@ namespace MP2
             _bttnPressedColor = ColorsConfig.ButtonPressed;
             _bttnDefaultColor = ColorsConfig.ButtonDefault;
             SwitchPage(AppStates.Menu);
-        }
 
+            //events
+            EpochTrackBar.ValueChanged += EpochTrackBar_ValueChanged;
+            LearningRateTrackBar.ValueChanged += LearningRateTrackBar_ValueChanged;
+            ThresholdTrackBar.ValueChanged += ThresholdTrackBar_ValueChanged;
+            MaxErrorTrackBar.ValueChanged += MaxErrorTrackBar_ValueChanged;
+
+            TrainSetPathText.TextChanged += TrainSetPathText_TextChanged;
+            TestSetPathText.TextChanged += TestSetPathText_TextChanged;
+            OutputSetPathText.TextChanged += OutputSetPathText_TextChanged;
+
+            InitializeFields();  
+        }
 
         
 
+        #region Events
+
+        #region TextBox_TextChanged
+
+        private void TestSetPathText_TextChanged(object sender, EventArgs e)
+        {
+            _testSetPath = ((TextBox)sender).Text;
+        }
+
+        private void TrainSetPathText_TextChanged(object sender, EventArgs e)
+        {
+            _trainSetPath = ((TextBox)sender).Text;
+        }
+
+        private void OutputSetPathText_TextChanged(object sender, EventArgs e)
+        {
+            _outputSetPath = ((TextBox)sender).Text;
+        }
+        #endregion
+
+        #region TrackBar_ValueChanged
+
+        private void MaxErrorTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            MaxErrorBox.Text = (((TrackBar)sender).Value * 0.05).ToString();
+        }
+
+        private void ThresholdTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            ThresholdBox.Text = (((TrackBar)sender).Value * 0.05).ToString();
+        }
+
+        private void LearningRateTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            LearningRateBox.Text = (((TrackBar)sender).Value * 0.05).ToString();
+        }
+
+        private void EpochTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            EpochCountBox.Text = (((TrackBar)sender).Value * 5).ToString();
+        }
+        #endregion
+
+        #endregion
+
+        #region Button Clicks
+        private void MenuBtn_Click(object sender, EventArgs e)
+        {
+            if(TrainSetPathText!=null && TestSetPathText != null)
+            {
+                LoadMenuPage();
+            }
+            SwitchPage(AppStates.Menu);
+        }
+
+        private void SettingsBtn_Click(object sender, EventArgs e)
+        {
+            SwitchPage(AppStates.Settings);
+        }
+
+        private void StartBtn_Click(object sender, EventArgs e)
+        {
+            TestDataTextBox.Text = "";
+        }
+
+        private void ExitBtn_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+        #endregion
+
+        #region Select File Pathes
+
         private void SelectTrainSetPath_Click(object sender, EventArgs e)
         {
-            TrainSetPathText.Text = PickFolder();
+            TrainSetPathText.Text = PickFile();
         }
 
         private void SelectTestSetPath_Click(object sender, EventArgs e)
         {
-            TestSetPathText.Text = PickFolder();
+            TestSetPathText.Text = PickFile();
+        }
+
+        private void SelectOutputSetPath_Click(object sender, EventArgs e)
+        {
+            OutputSetPathText.Text = PickFile();
+        }
+
+        private string PickFile()
+        {
+            var dialog = new CommonOpenFileDialog();
+            var filter = new CommonFileDialogFilter("CSV", "*.csv");
+            dialog.Filters.Add(filter);
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                return dialog.FileName;
+            }
+            return null;
+        }
+        #endregion
+
+        #region Set Attributes
+
+        private void SetAttributes(params string[] @params)
+        {
+            AttributesListBox.Items.Clear();
+
+            foreach (var field in @params)
+            {
+                AttributesListBox.Items.Add(field, false);
+            }
+        }
+        private void SetAttributes<T>()
+        {
+            var fields = typeof(T).GetFields();
+            AttributesListBox.Items.Clear();
+
+            foreach (var field in fields)
+            {
+                AttributesListBox.Items.Add(field.Name, false);
+            }
+        }
+        #endregion
+
+        private void InitializeFields()
+        {
+            EpochCountBox.Text = (EpochTrackBar.Value * 5).ToString();
+            LearningRateBox.Text = (LearningRateTrackBar.Value * 0.05).ToString();
+            ThresholdBox.Text = (ThresholdTrackBar.Value * 0.05).ToString();
+            MaxErrorBox.Text = (MaxErrorTrackBar.Value * 0.05).ToString();
+
+            TrainSetPathText.Text = TRAIN_SET_DEFAULT_PATH;
+            TestSetPathText.Text = TEST_SET_DEFAULT_PATH;
+
+            _trainSetPath = TrainSetPathText.Text;
+            _testSetPath = TestSetPathText.Text;
+        }
+
+        private void InitComboBox(params string[] @params)
+        {
+            OutputAttributeComboBox.Items.Clear();
+            foreach(var item in @params)
+            {
+                OutputAttributeComboBox.Items.Add(item);
+            }
         }
 
         private void SwitchPage(AppStates state)
@@ -57,8 +215,8 @@ namespace MP2
                 case AppStates.None:
                     MenuBtn.BackColor = _bttnDefaultColor;
                     SettingsBtn.BackColor = _bttnDefaultColor;
-                    MenuPanel.Visible = false;
                     SettingsPanel.Visible = false;
+                    MenuPanel.Visible = false;
                     break;
                 case AppStates.Menu:
                     MenuBtn.BackColor = _bttnPressedColor;
@@ -69,31 +227,47 @@ namespace MP2
                 case AppStates.Settings:
                     MenuBtn.BackColor = _bttnDefaultColor;
                     SettingsBtn.BackColor = _bttnPressedColor;
-                    MenuPanel.Visible = false;
                     SettingsPanel.Visible = true;
+                    MenuPanel.Visible = false;
                     break;
             }
         }
 
-        private string PickFolder()
+        private void LoadMenuPage()
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (_trainSetPath != null || _testSetPath != null)
             {
-                return dialog.FileName;
+                var trainReader = new ReaderCSV(new ParserCSV(_trainSetPath));
+                var testReader = new ReaderCSV(new ParserCSV(_testSetPath));
+
+                var trainHeaders = trainReader.GetHeaders();
+                var testHeaders = testReader.GetHeaders();
+
+                if (!trainHeaders.SequenceEqual(testHeaders)) throw new ArgumentException("Train & test sets correspond to different objects");
+
+                trainReader.Dispose();
+                testReader.Dispose();
+
+                TrainDataTextBox.Text = LoadData(_trainSetPath);
+                TestDataTextBox.Text = LoadData(_testSetPath);
+                SetAttributes(trainHeaders);
+                InitComboBox(trainHeaders);
             }
-            return null;
         }
 
-        private void MenuBtn_Click(object sender, EventArgs e)
+        private string LoadData(string filePath)
         {
-            SwitchPage(AppStates.Menu);
-        }
+            var reader = new ReaderCSV(new ParserCSV(filePath));
+            var items = reader.ReadToEnd<TrainObject>();
+            reader.Dispose();
 
-        private void SettingsBtn_Click(object sender, EventArgs e)
-        {
-            SwitchPage(AppStates.Settings);
+            string data = "";
+            foreach (var item in items)
+            {
+                data += item.ToString() + "\r\n";
+            }
+            if (data.EndsWith("\r\n")) data = data.Substring(0, data.Length - 2);
+            return data;
         }
     }
 }

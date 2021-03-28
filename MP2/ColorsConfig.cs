@@ -14,5 +14,8 @@ namespace MP2
         public static Color ButtonPressed { get{return Color.FromArgb(120, 85, 65);} }
         public static Color Fore { get{return Color.FromArgb(30, 30, 45);} }
         public static Color LeftPane { get{return Color.FromArgb(180, 140, 115);} }
+
+        //bttn highlighted = 105, 75, 55
+        //dark 65,65,65
     }
 }

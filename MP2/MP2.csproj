@@ -65,7 +65,16 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainController.cs" />
+    <Compile Include="Models\Exporter\Common\IParser\IParserBase.cs" />
+    <Compile Include="Models\Exporter\Common\IParser\IParserCSV.cs" />
+    <Compile Include="Models\Exporter\Common\IReader\IReaderBase.cs" />
+    <Compile Include="Models\Exporter\Common\IReader\IReaderCSV.cs" />
+    <Compile Include="Models\Exporter\ParserCSV.cs" />
+    <Compile Include="Models\Exporter\ReaderCSV.cs" />
     <Compile Include="Models\Perceptron.cs" />
+    <Compile Include="Models\Trainer.cs" />
+    <Compile Include="Models\TrainObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -81,6 +90,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Data\irisTest.csv" />
+    <None Include="Data\irisTrain.csv" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -103,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Exit.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

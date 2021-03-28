@@ -1,21 +1,50 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MP2.Models
 {
-    class Perceptron
+    public class Perceptron
     {
-        private double[] _weights;
-        private float _learningRate; 
-        private float _threshold;
+        public double[] Weights { get; set; }
+        private readonly float _threshold;
 
-        public void Train(double[][] inputData, double[] outputs, float threshold, float learningRate, int epoch)
+        public Perceptron(double[] weights,  float threshold)
+        {
+            Weights = weights;
+            _threshold = threshold;
+        }
+
+        public Perceptron(float threshold)
         {
             _threshold = threshold;
-            _learningRate = learningRate;
+        }
+
+        public void ResizeWeights(int size, bool fillWithRandomValues = true)
+        {
+            if (size <= 0) throw new ArgumentException("Weights count cant be negative");
+            Weights = new double[size];
+            if (fillWithRandomValues)
+            {
+                for (int i = 0; i < Weights.Length; i++) 
+                    Weights[i] = new Random().Next(0, 1);
+            }
+        }
+
+        public int GetOutput(double[] input)
+        {
+            double sum = 0;
+            try
+            {
+                for (int i = 0; i < input.Length; i++)
+                {
+                    sum += Weights[i] * input[i];
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+
+            return sum > _threshold ? 1 : 0;
         }
     }
 }
