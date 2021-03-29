@@ -14,20 +14,31 @@ namespace Exporter.Models
         private static StreamReader _reader;
         private readonly char _delimiter;
         private bool _isDisposed;
+        private string[] _headers;
 
         public ParserCSV(string filePath, char delimiter = ',')
         {
             _filePath = filePath;
             _reader = new StreamReader(filePath);
             _delimiter = delimiter;
+            var headers = ParseHeaders();
+            if (headers is null) throw new NullReferenceException("File is empty");
+            _headers = headers;
+        }
+
+        public string[] ParseHeaders()
+        {
+            if (_headers != null) return _headers;
+            return ParseLine(0);
         }
 
         public string[] ParseLine()
         {
             var line = _reader.ReadLine();
             if (line is null) return null;
+            var words = line.Split(_delimiter).Select(item => item.Trim()).ToArray();
+            if (words.SequenceEqual(_headers)) words = ParseLine();
 
-            string[] words = line.Split(_delimiter).Select(item => item.Trim()).ToArray();
             return words;
         }
 

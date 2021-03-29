@@ -72,9 +72,10 @@
     <Compile Include="Models\Exporter\Common\IReader\IReaderCSV.cs" />
     <Compile Include="Models\Exporter\ParserCSV.cs" />
     <Compile Include="Models\Exporter\ReaderCSV.cs" />
+    <Compile Include="Models\InputManager.cs" />
     <Compile Include="Models\Perceptron.cs" />
     <Compile Include="Models\Trainer.cs" />
-    <Compile Include="Models\TrainObject.cs" />
+    <Compile Include="Models\UniversalObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

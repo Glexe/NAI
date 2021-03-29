@@ -237,37 +237,30 @@ namespace MP2
         {
             if (_trainSetPath != null || _testSetPath != null)
             {
-                var trainReader = new ReaderCSV(new ParserCSV(_trainSetPath));
-                var testReader = new ReaderCSV(new ParserCSV(_testSetPath));
+                RefreshDatabase();
 
-                var trainHeaders = trainReader.GetHeaders();
-                var testHeaders = testReader.GetHeaders();
+                var trainHeaders_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.DOUBLE);
+                var testHeaders = InputManager.GetHeaders(InputManager.DataSet.TEST, InputManager.DataType.DOUBLE);
 
-                if (!trainHeaders.SequenceEqual(testHeaders)) throw new ArgumentException("Train & test sets correspond to different objects");
+                if (!trainHeaders_double.SequenceEqual(testHeaders)) throw new ArgumentException("Train & test sets correspond to different objects");
 
-                trainReader.Dispose();
-                testReader.Dispose();
-
-                TrainDataTextBox.Text = LoadData(_trainSetPath);
-                TestDataTextBox.Text = LoadData(_testSetPath);
-                SetAttributes(trainHeaders);
-                InitComboBox(trainHeaders);
+                SetData(TrainDataTextBox, _trainSetPath);
+                SetData(TestDataTextBox, _testSetPath);
+                SetAttributes(trainHeaders_double);
+                InitComboBox(trainHeaders_double);
             }
         }
 
-        private string LoadData(string filePath)
+        private void RefreshDatabase()
         {
-            var reader = new ReaderCSV(new ParserCSV(filePath));
-            var items = reader.ReadToEnd<TrainObject>();
-            reader.Dispose();
+            if (_outputSetPath != null) MainController.LoadDataToDatabase(_outputSetPath, InputManager.DataSet.OUTPUT);
+            if (_testSetPath != null) MainController.LoadDataToDatabase(_testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.LoadDataToDatabase(_trainSetPath, InputManager.DataSet.TRAIN);
+        }
 
-            string data = "";
-            foreach (var item in items)
-            {
-                data += item.ToString() + "\r\n";
-            }
-            if (data.EndsWith("\r\n")) data = data.Substring(0, data.Length - 2);
-            return data;
+        private void SetData(TextBox textBox, string filePath)
+        {
+            textBox.Text = MainController.ReadData(filePath);
         }
     }
 }
