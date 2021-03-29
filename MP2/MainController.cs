@@ -19,7 +19,7 @@ namespace MP2
             List<UniversalObject> objectsList = new List<UniversalObject>();
 
             string[] line;
-            while((line = parser.ParseLine()) != null)
+            while ((line = parser.ParseLine()) != null)
             {
                 if (line.Length != headers.Length) throw new ArgumentException($"Invalid data in: {filePath}");
                 objectsList.Add(InputManager.CreateInstance(line, headers, dataSet));
@@ -41,67 +41,38 @@ namespace MP2
             ReadData(filePath, dataSet);
         }
 
-        public static string GetOutput()
+        public static bool TestOnce(Perceptron perceptron, double[] input, double output)
         {
-            return "asd";
+            return perceptron.GetOutput(input) == output;
         }
 
-        public static string TestTrain(string outputName, string[] attributes, float learningRate, uint epoch, float threshold)
+        public static int GetOutput(Perceptron perceptron, double[] input)
         {
-            List<double[]> inputs = new List<double[]>();
-            InputManager.dataSets.TryGetValue(DataSet.TRAIN, out List<UniversalObject> tmpList);
-            List<double> outputs = new List<double>();
+            return perceptron.GetOutput(input);
+        }
 
-            List<double[]> testInputs = new List<double[]>();
-            InputManager.dataSets.TryGetValue(DataSet.TEST, out List<UniversalObject> tmpTestList);
-            List<double> testOutputs = new List<double>();
-
-            foreach (var item in tmpList)
-            {
-                var valKeys = item.DoubleValues.Where(k => attributes.Contains(k.Key)).ToArray();
-
-                List<double> valuesList = new List<double>();
-
-                foreach (var key in valKeys)
-                {
-                    valuesList.Add(key.Value);
-                }
-                inputs.Add(valuesList.ToArray());
-
-                outputs.Add(item.StringValues.Single(k => k.Key == outputName).Value == "Iris-setosa" ? 1 : 0);
-            }
-            
-            foreach(var item in tmpTestList)
-            {
-                var valKeys = item.DoubleValues.Where(k => attributes.Contains(k.Key)).ToArray();
-
-                List<double> valuesList = new List<double>();
-
-                foreach (var key in valKeys)
-                {
-                    valuesList.Add(key.Value);
-                }
-                testInputs.Add(valuesList.ToArray());
-
-                testOutputs.Add(item.StringValues.Single(k => k.Key == outputName).Value == "Iris-setosa" ? 1:0);
-            }
-
+        public static void TrainSession(TrainData data)
+        {
             Trainer trainer = new Trainer();
-            Perceptron p1 = new Perceptron(threshold);
-            trainer.Train(inputs.ToArray(), outputs.ToArray(), learningRate, epoch, p1);
+            data.TransformData(out double[][] inputs, out double[] outputs);
+            trainer.Train(inputs, outputs, data.LearningRate, data.Epoch, data.Perceptron);
+        }
 
-            float value = 0;
+        public static string TestSession(TrainData data)
+        {
+            data.TransformData(out double[][] inputs, out double[] outputs);
+
             float correct = 0;
-            float @false = 0;
+            float incorrect = 0;
 
-            for(int i=0; i<testInputs.Count; i++)
+            for (int i = 0; i < inputs.Length; i++)
             {
-                if (p1.GetOutput(testInputs[i]) == testOutputs[i]) correct++;
-                else @false++;
+                if (data.Perceptron.GetOutput(inputs[i]) == outputs[i]) correct++;
+                else incorrect++;
             }
 
-            value = correct / (correct + @false);
-            return $"Correct: {correct} \r\n False: {@false} \r\n Opacity: {value}";
+            float accuracy = correct / (correct + incorrect);
+            return $"Correct: {correct} \r\nIncorrect: {incorrect} \r\nAccuracy: {accuracy}";
         }
     }
 }

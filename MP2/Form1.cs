@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
 using MP2.Models;
-using Exporter.Models;
-using System.Threading;
 
 namespace MP2
 {
@@ -31,12 +25,24 @@ namespace MP2
             Settings
         }
 
+        struct TrainSpecs
+        {
+            public string[] inputAttributes;
+            public string outputAttribute;
+            public float learningRate;
+            public uint epoch;
+            public float threshold;
+            public float maxError;
+        }
+
         private readonly Color _bttnPressedColor;
         private readonly Color _bttnDefaultColor;
 
         private string _trainSetPath;
         private string _testSetPath;
         private string _outputSetPath;
+
+        private Perceptron _perceptron;
 
         public Form1()
         {
@@ -124,7 +130,7 @@ namespace MP2
         private void StartBtn_Click(object sender, EventArgs e)
         {
             //TestDataTextBox.Text = "";
-            Test();
+            PushSession();
         }
 
         private void ExitBtn_Click(object sender, EventArgs e)
@@ -163,8 +169,6 @@ namespace MP2
         }
         #endregion
 
-        #region Set Attributes
-
         private void SetAttributes(params string[] @params)
         {
             AttributesListBox.Items.Clear();
@@ -174,17 +178,6 @@ namespace MP2
                 AttributesListBox.Items.Add(field, false);
             }
         }
-        private void SetAttributes<T>()
-        {
-            var fields = typeof(T).GetFields();
-            AttributesListBox.Items.Clear();
-
-            foreach (var field in fields)
-            {
-                AttributesListBox.Items.Add(field.Name, false);
-            }
-        }
-        #endregion
 
         private void InitializeFields()
         {
@@ -265,7 +258,20 @@ namespace MP2
             textBox.Text = MainController.ReadData(filePath);
         }
 
-        private void Test()
+        private void ReadTrainSpecs(out TrainSpecs trainSpecs)
+        {
+            trainSpecs = new TrainSpecs
+            {
+                inputAttributes = GetInputAttributes(),
+                outputAttribute = OutputAttributeComboBox.Text,
+                learningRate = float.Parse(LearningRateBox.Text),
+                epoch = uint.Parse(EpochCountBox.Text),
+                threshold = float.Parse(ThresholdBox.Text),
+                maxError = float.Parse(MaxErrorBox.Text)
+            };
+        }
+
+        private string[] GetInputAttributes()
         {
             List<string> checkedItemsList = new List<string>();
             for(int i=0; i<AttributesListBox.CheckedItems.Count; i++)
@@ -273,7 +279,44 @@ namespace MP2
                 checkedItemsList.Add(AttributesListBox.CheckedItems[i].ToString());
             }
 
-            ResultTextBox.Text += "\r\n"+MainController.TestTrain(OutputAttributeComboBox.Text, checkedItemsList.ToArray(), float.Parse(LearningRateBox.Text), uint.Parse(EpochCountBox.Text), float.Parse(ThresholdBox.Text));
+            return checkedItemsList.ToArray();
+        }
+
+        private Predicate<object> GetPredicate()
+        {
+
+        }
+
+        private void PushSession(bool useNewPerceptron = true)
+        {
+            ReadTrainSpecs(out TrainSpecs specs);
+            if(useNewPerceptron || _perceptron is null)
+            {
+                _perceptron = new Perceptron();
+            }
+            _perceptron.Threshold = specs.threshold;
+
+            //InputManager.DataSet dataSet = InputManager.DataSet.TRAIN;
+            //DataType dataType = DataType.DOUBLE;
+            //Predicate<object> predicate = new Predicate<object>(k => (bool)k);
+
+            TrainData trainData = new TrainData
+            {
+                OutputAttribute = specs.outputAttribute,
+                InputAttributes = specs.inputAttributes,
+                LearningRate = specs.learningRate,
+                Epoch = specs.epoch,
+                @Perceptron = _perceptron,
+                @Predicate = predicate,
+                @DataSet = InputManager.DataSet.TRAIN,
+                @DataType = dataType
+            };
+
+            
+
+            MainController.TrainSession(trainData);
+            trainData.DataSet = InputManager.DataSet.TEST;
+            ResultTextBox.Text += "\r\n" + MainController.TestSession(trainData);
         }
     }
 }

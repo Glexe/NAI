@@ -5,17 +5,22 @@ namespace MP2.Models
     public class Perceptron
     {
         public double[] Weights { get; set; }
-        private readonly float _threshold;
+        public float Threshold { get; set; }
 
         public Perceptron(double[] weights,  float threshold)
         {
             Weights = weights;
-            _threshold = threshold;
+            Threshold = threshold;
         }
 
         public Perceptron(float threshold)
         {
-            _threshold = threshold;
+            Threshold = threshold;
+        }
+
+        public Perceptron()
+        {
+
         }
 
         public void ResizeWeights(int size, bool fillWithRandomValues = true)
@@ -44,7 +49,7 @@ namespace MP2.Models
                 return -1;
             }
 
-            return sum > _threshold ? 1 : 0;
+            return sum > Threshold ? 1 : 0;
         }
     }
 }

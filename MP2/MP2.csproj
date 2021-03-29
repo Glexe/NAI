@@ -74,6 +74,7 @@
     <Compile Include="Models\Exporter\ReaderCSV.cs" />
     <Compile Include="Models\InputManager.cs" />
     <Compile Include="Models\Perceptron.cs" />
+    <Compile Include="Models\TrainData.cs" />
     <Compile Include="Models\Trainer.cs" />
     <Compile Include="Models\UniversalObject.cs" />
     <Compile Include="Program.cs" />
