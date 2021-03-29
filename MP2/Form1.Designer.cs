@@ -47,6 +47,10 @@ namespace MP2
             this.SelectTrainSetPath = new System.Windows.Forms.Button();
             this.TrainSetPathText = new System.Windows.Forms.TextBox();
             this.MenuPanel = new System.Windows.Forms.Panel();
+            this.ConditionTextBox = new System.Windows.Forms.TextBox();
+            this.ConditionPanel = new System.Windows.Forms.Panel();
+            this.OperatorChooserComboBox = new System.Windows.Forms.ComboBox();
+            this.DescLabel = new System.Windows.Forms.Label();
             this.OutputAttributeComboBox = new System.Windows.Forms.ComboBox();
             this.MaxErrorBox = new System.Windows.Forms.TextBox();
             this.ThresholdBox = new System.Windows.Forms.TextBox();
@@ -70,12 +74,13 @@ namespace MP2
             this.StartBtn = new System.Windows.Forms.Button();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.DescLabel = new System.Windows.Forms.Label();
+            this.InvalidConditionLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
             this.SettingsPanel.SuspendLayout();
             this.MenuPanel.SuspendLayout();
+            this.ConditionPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxErrorTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).BeginInit();
@@ -304,6 +309,7 @@ namespace MP2
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.MenuPanel.Controls.Add(this.ConditionPanel);
             this.MenuPanel.Controls.Add(this.DescLabel);
             this.MenuPanel.Controls.Add(this.OutputAttributeComboBox);
             this.MenuPanel.Controls.Add(this.MaxErrorBox);
@@ -332,6 +338,50 @@ namespace MP2
             this.MenuPanel.Name = "MenuPanel";
             this.MenuPanel.Size = new System.Drawing.Size(763, 554);
             this.MenuPanel.TabIndex = 4;
+            // 
+            // ConditionTextBox
+            // 
+            this.ConditionTextBox.Location = new System.Drawing.Point(49, 0);
+            this.ConditionTextBox.Multiline = true;
+            this.ConditionTextBox.Name = "ConditionTextBox";
+            this.ConditionTextBox.Size = new System.Drawing.Size(51, 25);
+            this.ConditionTextBox.TabIndex = 31;
+            // 
+            // ConditionPanel
+            // 
+            this.ConditionPanel.BackColor = System.Drawing.Color.Transparent;
+            this.ConditionPanel.Controls.Add(this.ConditionTextBox);
+            this.ConditionPanel.Controls.Add(this.OperatorChooserComboBox);
+            this.ConditionPanel.Controls.Add(this.InvalidConditionLabel);
+            this.ConditionPanel.Location = new System.Drawing.Point(183, 198);
+            this.ConditionPanel.Name = "ConditionPanel";
+            this.ConditionPanel.Size = new System.Drawing.Size(342, 25);
+            this.ConditionPanel.TabIndex = 33;
+            this.ConditionPanel.Visible = false;
+            // 
+            // OperatorChooserComboBox
+            // 
+            this.OperatorChooserComboBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.OperatorChooserComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.OperatorChooserComboBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.OperatorChooserComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.OperatorChooserComboBox.FormattingEnabled = true;
+            this.OperatorChooserComboBox.Location = new System.Drawing.Point(0, 0);
+            this.OperatorChooserComboBox.MaxDropDownItems = 65;
+            this.OperatorChooserComboBox.Name = "OperatorChooserComboBox";
+            this.OperatorChooserComboBox.Size = new System.Drawing.Size(43, 25);
+            this.OperatorChooserComboBox.TabIndex = 32;
+            // 
+            // DescLabel
+            // 
+            this.DescLabel.AutoSize = true;
+            this.DescLabel.Font = new System.Drawing.Font("Nirmala UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DescLabel.ForeColor = System.Drawing.Color.DimGray;
+            this.DescLabel.Location = new System.Drawing.Point(15, 21);
+            this.DescLabel.Name = "DescLabel";
+            this.DescLabel.Size = new System.Drawing.Size(279, 15);
+            this.DescLabel.TabIndex = 30;
+            this.DescLabel.Text = "*Currently app works only with numeric data types*";
             // 
             // OutputAttributeComboBox
             // 
@@ -599,16 +649,17 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // DescLabel
+            // InvalidConditionLabel
             // 
-            this.DescLabel.AutoSize = true;
-            this.DescLabel.Font = new System.Drawing.Font("Nirmala UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DescLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.DescLabel.Location = new System.Drawing.Point(15, 21);
-            this.DescLabel.Name = "DescLabel";
-            this.DescLabel.Size = new System.Drawing.Size(279, 15);
-            this.DescLabel.TabIndex = 30;
-            this.DescLabel.Text = "*Currently app works only with numeric data types*";
+            this.InvalidConditionLabel.AutoSize = true;
+            this.InvalidConditionLabel.Font = new System.Drawing.Font("Nirmala UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+            this.InvalidConditionLabel.ForeColor = System.Drawing.Color.Maroon;
+            this.InvalidConditionLabel.Location = new System.Drawing.Point(119, 3);
+            this.InvalidConditionLabel.Name = "InvalidConditionLabel";
+            this.InvalidConditionLabel.Size = new System.Drawing.Size(206, 17);
+            this.InvalidConditionLabel.TabIndex = 34;
+            this.InvalidConditionLabel.Text = "Please provide a valid condition";
+            this.InvalidConditionLabel.Visible = false;
             // 
             // Form1
             // 
@@ -631,6 +682,8 @@ namespace MP2
             this.SettingsPanel.PerformLayout();
             this.MenuPanel.ResumeLayout(false);
             this.MenuPanel.PerformLayout();
+            this.ConditionPanel.ResumeLayout(false);
+            this.ConditionPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxErrorTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).EndInit();
@@ -682,6 +735,10 @@ namespace MP2
         private System.Windows.Forms.TextBox OutputSetPathText;
         private System.Windows.Forms.ComboBox OutputAttributeComboBox;
         private System.Windows.Forms.Label DescLabel;
+        private System.Windows.Forms.ComboBox OperatorChooserComboBox;
+        private System.Windows.Forms.TextBox ConditionTextBox;
+        private System.Windows.Forms.Panel ConditionPanel;
+        private System.Windows.Forms.Label InvalidConditionLabel;
     }
 }
 

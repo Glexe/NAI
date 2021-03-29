@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static MP2.Models.InputManager;
+using Attribute = MP2.Models.Attribute;
 
 namespace MP2
 {
@@ -64,15 +65,43 @@ namespace MP2
 
             float correct = 0;
             float incorrect = 0;
+            string answers = "";
 
-            for (int i = 0; i < inputs.Length; i++)
+            /*for (int i = 0; i < inputs.Length; i++)
             {
                 if (data.Perceptron.GetOutput(inputs[i]) == outputs[i]) correct++;
                 else incorrect++;
+            }*/
+
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                var res = data.Perceptron.GetOutput(inputs[i]);
+                if (res == outputs[i]) correct++;
+                else incorrect++;
+                answers += $"input: {inputs[i][1]}, out: {outputs[i]}, res: {res}\r\n";
             }
 
             float accuracy = correct / (correct + incorrect);
-            return $"Correct: {correct} \r\nIncorrect: {incorrect} \r\nAccuracy: {accuracy}";
+            return $"Correct: {correct} \r\nIncorrect: {incorrect} \r\nAccuracy: {accuracy}\r\n{answers}";
+        }
+
+        public static Predicate<Attribute> CreateCondition(string @operator, string value)
+        {
+            Predicate<Attribute> predicate;
+            var asd = new Attribute("test", value);
+            
+            switch (@operator)
+            {
+                case "==":
+                    return predicate = o1 => o1.value == asd.value;
+                case "!=":
+                    return predicate = o1 => o1.value != asd.value;
+                case ">":
+                    return predicate = o1 => o1.value > asd.value;
+                case "<":
+                    return predicate = o1 => o1.value < asd.value;
+            }
+            return null;
         }
     }
 }

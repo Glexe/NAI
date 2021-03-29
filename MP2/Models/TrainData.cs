@@ -7,14 +7,14 @@ using static MP2.Models.InputManager;
 
 namespace MP2.Models
 {
-    public class TrainData
+    public class TrainData : IOperatorExtension
     {
         public string OutputAttribute { get; set; }
         public string[] InputAttributes { get; set; }
         public float LearningRate { get; set; }
         public uint Epoch { get; set; }
         public Perceptron @Perceptron { get; set; }
-        public Predicate<object> @Predicate { get; set; }
+        public Predicate<Attribute> @Predicate { get; set; }
         public DataSet @DataSet { get; set; }
         public DataType @DataType { get; set; }
 
@@ -49,7 +49,7 @@ namespace MP2.Models
                     default:
                         throw new ArgumentNullException($"Data type <{@DataType}> was not implemented in MainController :: DataTransformer");
                 }
-                outputs.Add(@Predicate.Invoke(value) ? 1 : 0);
+                outputs.Add(@Predicate.Invoke(new Attribute("asd", value.ToString())) ? 1 : 0);
                 //
 
             }

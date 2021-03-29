@@ -66,6 +66,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="MainController.cs" />
+    <Compile Include="Models\Attribute.cs" />
     <Compile Include="Models\Exporter\Common\IParser\IParserBase.cs" />
     <Compile Include="Models\Exporter\Common\IParser\IParserCSV.cs" />
     <Compile Include="Models\Exporter\Common\IReader\IReaderBase.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Models\Exporter\ParserCSV.cs" />
     <Compile Include="Models\Exporter\ReaderCSV.cs" />
     <Compile Include="Models\InputManager.cs" />
+    <Compile Include="Models\IOperatorExtension.cs" />
     <Compile Include="Models\Perceptron.cs" />
     <Compile Include="Models\TrainData.cs" />
     <Compile Include="Models\Trainer.cs" />

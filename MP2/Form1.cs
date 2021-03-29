@@ -7,6 +7,9 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Runtime.InteropServices;
 using MP2.Models;
+using System.Text.RegularExpressions;
+using Attribute = MP2.Models.Attribute;
+using static MP2.Models.InputManager;
 
 namespace MP2
 {
@@ -38,6 +41,9 @@ namespace MP2
         private readonly Color _bttnPressedColor;
         private readonly Color _bttnDefaultColor;
 
+        private string[] _headers_double;
+        private string[] _headers_string;
+
         private string _trainSetPath;
         private string _testSetPath;
         private string _outputSetPath;
@@ -61,13 +67,63 @@ namespace MP2
             TrainSetPathText.TextChanged += TrainSetPathText_TextChanged;
             TestSetPathText.TextChanged += TestSetPathText_TextChanged;
             OutputSetPathText.TextChanged += OutputSetPathText_TextChanged;
+            ConditionTextBox.TextChanged += ConditionTextBox_TextChanged;
+
+            AttributesListBox.ItemCheck += AttributesListBox_ItemCheck;
+
+            OutputAttributeComboBox.SelectedValueChanged += OutputAttributeComboBox_SelectedValueChanged;
+            OperatorChooserComboBox.SelectedValueChanged += OperatorChooserComboBox_SelectedValueChanged;
 
             InitializeFields();  
         }
 
-        
+        private void OperatorChooserComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ValidateCondition();
+        }
+
+        private void ConditionTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ValidateCondition();
+        }
 
         #region Events
+
+        private void AttributesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var item = ((CheckedListBox)sender).Items[e.Index].ToString();
+            if (e.NewValue == CheckState.Checked)
+            {
+                OutputAttributeComboBox.Items.Remove(item);
+            }
+            else
+            {
+                if (!OutputAttributeComboBox.Items.Contains(item))
+                    OutputAttributeComboBox.Items.Add(item);
+            }
+
+            var status = OutputAttributeComboBox.SelectedItem != null;
+            ConditionPanel.Visible = status;
+        }
+
+        private void OutputAttributeComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var item = ((ComboBox)sender).SelectedItem;
+            var status = item != null;
+            if (status) ValidateCondition();
+            ConditionPanel.Visible = status;
+            if(_headers_string != null && _headers_double != null)
+            {
+                if (_headers_double.Contains(item.ToString()))
+                {
+                    SetOperatorsList(InputManager.DataType.DOUBLE);
+                }
+                else if (_headers_string.Contains(item.ToString()))
+                {
+                    SetOperatorsList(InputManager.DataType.STRING);
+                }
+            }
+        }
 
         #region TextBox_TextChanged
 
@@ -169,16 +225,6 @@ namespace MP2
         }
         #endregion
 
-        private void SetAttributes(params string[] @params)
-        {
-            AttributesListBox.Items.Clear();
-
-            foreach (var field in @params)
-            {
-                AttributesListBox.Items.Add(field, false);
-            }
-        }
-
         private void InitializeFields()
         {
             EpochCountBox.Text = (EpochTrackBar.Value * 5).ToString();
@@ -191,6 +237,15 @@ namespace MP2
 
             _trainSetPath = TrainSetPathText.Text;
             _testSetPath = TestSetPathText.Text;
+        }
+
+        private void SetAttributes(params string[] @params)
+        {
+            AttributesListBox.Items.Clear();
+            foreach (var field in @params)
+            {
+                AttributesListBox.Items.Add(field, false);
+            }
         }
 
         private void InitComboBox(params string[] @params)
@@ -227,10 +282,64 @@ namespace MP2
             }
         }
 
+        private void SetOperatorsList(InputManager.DataType dataType)
+        {
+            ConditionTextBox.Text = "";
+            OperatorChooserComboBox.Items.Clear();
+            OperatorChooserComboBox.Items.Add("==");
+            OperatorChooserComboBox.Items.Add("!=");
+
+            if(dataType == InputManager.DataType.DOUBLE)
+            {
+                OperatorChooserComboBox.Items.Add(">");
+                OperatorChooserComboBox.Items.Add("<");
+            }
+        }
+
+        private void ValidateCondition()
+        {
+            var doubleRegex = @"^\d*\.{0,1}\d+$";
+            var stringRegex = @"^.+$";
+            Regex regex;
+            
+            if (_headers_double.Contains(OutputAttributeComboBox.SelectedItem.ToString()))
+            {
+                regex = new Regex(doubleRegex);
+            }
+            else if (_headers_string.Contains(OutputAttributeComboBox.SelectedItem.ToString()))
+            {
+                regex = new Regex(stringRegex);
+            }
+            else
+            {
+                throw new Exception("Reload data");
+            }
+            
+            if(!regex.IsMatch(ConditionTextBox.Text) || OperatorChooserComboBox.SelectedItem is null)
+            {
+                InvalidConditionLabel.Visible = true;
+            }
+            else
+            {
+                InvalidConditionLabel.Visible = false;
+            }
+        }
+
+        
+
+        private bool test()
+        {
+            double d1 = 2.0;
+            Predicate<dynamic> predicate = o1 => o1 == 2;
+            return predicate.Invoke(d1);
+        }
+
         private void LoadMenuPage()
         {
             if (_trainSetPath != null || _testSetPath != null)
             {
+                ResultTextBox.Text = test().ToString();
+                ConditionPanel.Visible = false;
                 RefreshDatabase();
 
                 var trainHeaders_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.DOUBLE);
@@ -239,10 +348,16 @@ namespace MP2
                 if (!trainHeaders_double.SequenceEqual(testHeaders)) throw new ArgumentException("Train & test sets correspond to different objects");
 
                 SetData(TrainDataTextBox, _trainSetPath);
+                
                 SetData(TestDataTextBox, _testSetPath);
                 SetAttributes(trainHeaders_double);
+                
                 var trainHeaders_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.STRING);
-                InitComboBox(trainHeaders_string);
+                
+                _headers_double = trainHeaders_double;
+                _headers_string = trainHeaders_string;
+
+                InitComboBox(trainHeaders_string.Concat(trainHeaders_double).ToArray());
             }
         }
 
@@ -284,7 +399,7 @@ namespace MP2
 
         private Predicate<object> GetPredicate()
         {
-
+            return new Predicate<object>(k => (bool) k);
         }
 
         private void PushSession(bool useNewPerceptron = true)
@@ -297,9 +412,9 @@ namespace MP2
             _perceptron.Threshold = specs.threshold;
 
             //InputManager.DataSet dataSet = InputManager.DataSet.TRAIN;
-            //DataType dataType = DataType.DOUBLE;
+            DataType dataType = DataType.DOUBLE;
             //Predicate<object> predicate = new Predicate<object>(k => (bool)k);
-
+            var pred = MainController.CreateCondition(OperatorChooserComboBox.SelectedItem.ToString(), ConditionTextBox.Text);
             TrainData trainData = new TrainData
             {
                 OutputAttribute = specs.outputAttribute,
@@ -307,7 +422,7 @@ namespace MP2
                 LearningRate = specs.learningRate,
                 Epoch = specs.epoch,
                 @Perceptron = _perceptron,
-                @Predicate = predicate,
+                @Predicate = pred,
                 @DataSet = InputManager.DataSet.TRAIN,
                 @DataType = dataType
             };
