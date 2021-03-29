@@ -123,7 +123,8 @@ namespace MP2
 
         private void StartBtn_Click(object sender, EventArgs e)
         {
-            TestDataTextBox.Text = "";
+            //TestDataTextBox.Text = "";
+            Test();
         }
 
         private void ExitBtn_Click(object sender, EventArgs e)
@@ -247,7 +248,8 @@ namespace MP2
                 SetData(TrainDataTextBox, _trainSetPath);
                 SetData(TestDataTextBox, _testSetPath);
                 SetAttributes(trainHeaders_double);
-                InitComboBox(trainHeaders_double);
+                var trainHeaders_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.STRING);
+                InitComboBox(trainHeaders_string);
             }
         }
 
@@ -261,6 +263,17 @@ namespace MP2
         private void SetData(TextBox textBox, string filePath)
         {
             textBox.Text = MainController.ReadData(filePath);
+        }
+
+        private void Test()
+        {
+            List<string> checkedItemsList = new List<string>();
+            for(int i=0; i<AttributesListBox.CheckedItems.Count; i++)
+            {
+                checkedItemsList.Add(AttributesListBox.CheckedItems[i].ToString());
+            }
+
+            ResultTextBox.Text += "\r\n"+MainController.TestTrain(OutputAttributeComboBox.Text, checkedItemsList.ToArray(), float.Parse(LearningRateBox.Text), uint.Parse(EpochCountBox.Text), float.Parse(ThresholdBox.Text));
         }
     }
 }

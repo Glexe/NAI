@@ -37,6 +37,9 @@ namespace MP2
             this.panel3 = new System.Windows.Forms.Panel();
             this.LogoImageBox = new System.Windows.Forms.PictureBox();
             this.SettingsPanel = new System.Windows.Forms.Panel();
+            this.label11 = new System.Windows.Forms.Label();
+            this.SelectOutputSetPath = new System.Windows.Forms.Button();
+            this.OutputSetPathText = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.SelectTestSetPath = new System.Windows.Forms.Button();
             this.TestSetPathText = new System.Windows.Forms.TextBox();
@@ -44,6 +47,7 @@ namespace MP2
             this.SelectTrainSetPath = new System.Windows.Forms.Button();
             this.TrainSetPathText = new System.Windows.Forms.TextBox();
             this.MenuPanel = new System.Windows.Forms.Panel();
+            this.OutputAttributeComboBox = new System.Windows.Forms.ComboBox();
             this.MaxErrorBox = new System.Windows.Forms.TextBox();
             this.ThresholdBox = new System.Windows.Forms.TextBox();
             this.LearningRateBox = new System.Windows.Forms.TextBox();
@@ -66,10 +70,7 @@ namespace MP2
             this.StartBtn = new System.Windows.Forms.Button();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.label11 = new System.Windows.Forms.Label();
-            this.SelectOutputSetPath = new System.Windows.Forms.Button();
-            this.OutputSetPathText = new System.Windows.Forms.TextBox();
-            this.OutputAttributeComboBox = new System.Windows.Forms.ComboBox();
+            this.DescLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
@@ -196,8 +197,41 @@ namespace MP2
             this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.SettingsPanel.Location = new System.Drawing.Point(141, 0);
             this.SettingsPanel.Name = "SettingsPanel";
-            this.SettingsPanel.Size = new System.Drawing.Size(763, 554);
+            this.SettingsPanel.Size = new System.Drawing.Size(763, 18);
             this.SettingsPanel.TabIndex = 1;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Nirmala UI", 17.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.label11.Location = new System.Drawing.Point(31, 330);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(324, 31);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Choose output-set (optional)";
+            // 
+            // SelectOutputSetPath
+            // 
+            this.SelectOutputSetPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelectOutputSetPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.SelectOutputSetPath.Location = new System.Drawing.Point(328, 379);
+            this.SelectOutputSetPath.Name = "SelectOutputSetPath";
+            this.SelectOutputSetPath.Size = new System.Drawing.Size(41, 22);
+            this.SelectOutputSetPath.TabIndex = 9;
+            this.SelectOutputSetPath.Text = "●●●";
+            this.SelectOutputSetPath.UseVisualStyleBackColor = true;
+            this.SelectOutputSetPath.Click += new System.EventHandler(this.SelectOutputSetPath_Click);
+            // 
+            // OutputSetPathText
+            // 
+            this.OutputSetPathText.Font = new System.Drawing.Font("Nirmala UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OutputSetPathText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.OutputSetPathText.Location = new System.Drawing.Point(37, 379);
+            this.OutputSetPathText.Name = "OutputSetPathText";
+            this.OutputSetPathText.ReadOnly = true;
+            this.OutputSetPathText.Size = new System.Drawing.Size(285, 22);
+            this.OutputSetPathText.TabIndex = 8;
             // 
             // label2
             // 
@@ -270,6 +304,7 @@ namespace MP2
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.MenuPanel.Controls.Add(this.DescLabel);
             this.MenuPanel.Controls.Add(this.OutputAttributeComboBox);
             this.MenuPanel.Controls.Add(this.MaxErrorBox);
             this.MenuPanel.Controls.Add(this.ThresholdBox);
@@ -297,6 +332,19 @@ namespace MP2
             this.MenuPanel.Name = "MenuPanel";
             this.MenuPanel.Size = new System.Drawing.Size(763, 554);
             this.MenuPanel.TabIndex = 4;
+            // 
+            // OutputAttributeComboBox
+            // 
+            this.OutputAttributeComboBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.OutputAttributeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.OutputAttributeComboBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.OutputAttributeComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.OutputAttributeComboBox.FormattingEnabled = true;
+            this.OutputAttributeComboBox.Location = new System.Drawing.Point(18, 198);
+            this.OutputAttributeComboBox.MaxDropDownItems = 65;
+            this.OutputAttributeComboBox.Name = "OutputAttributeComboBox";
+            this.OutputAttributeComboBox.Size = new System.Drawing.Size(159, 25);
+            this.OutputAttributeComboBox.TabIndex = 29;
             // 
             // MaxErrorBox
             // 
@@ -551,51 +599,16 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // label11
+            // DescLabel
             // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Nirmala UI", 17.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.label11.Location = new System.Drawing.Point(31, 330);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(324, 31);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "Choose output-set (optional)";
-            // 
-            // SelectOutputSetPath
-            // 
-            this.SelectOutputSetPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SelectOutputSetPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.SelectOutputSetPath.Location = new System.Drawing.Point(328, 379);
-            this.SelectOutputSetPath.Name = "SelectOutputSetPath";
-            this.SelectOutputSetPath.Size = new System.Drawing.Size(41, 22);
-            this.SelectOutputSetPath.TabIndex = 9;
-            this.SelectOutputSetPath.Text = "●●●";
-            this.SelectOutputSetPath.UseVisualStyleBackColor = true;
-            this.SelectOutputSetPath.Click += new System.EventHandler(this.SelectOutputSetPath_Click);
-            // 
-            // OutputSetPathText
-            // 
-            this.OutputSetPathText.Font = new System.Drawing.Font("Nirmala UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OutputSetPathText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.OutputSetPathText.Location = new System.Drawing.Point(37, 379);
-            this.OutputSetPathText.Name = "OutputSetPathText";
-            this.OutputSetPathText.ReadOnly = true;
-            this.OutputSetPathText.Size = new System.Drawing.Size(285, 22);
-            this.OutputSetPathText.TabIndex = 8;
-            // 
-            // OutputAttributeComboBox
-            // 
-            this.OutputAttributeComboBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.OutputAttributeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.OutputAttributeComboBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.OutputAttributeComboBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.OutputAttributeComboBox.FormattingEnabled = true;
-            this.OutputAttributeComboBox.Location = new System.Drawing.Point(18, 198);
-            this.OutputAttributeComboBox.MaxDropDownItems = 65;
-            this.OutputAttributeComboBox.Name = "OutputAttributeComboBox";
-            this.OutputAttributeComboBox.Size = new System.Drawing.Size(159, 25);
-            this.OutputAttributeComboBox.TabIndex = 29;
+            this.DescLabel.AutoSize = true;
+            this.DescLabel.Font = new System.Drawing.Font("Nirmala UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DescLabel.ForeColor = System.Drawing.Color.DimGray;
+            this.DescLabel.Location = new System.Drawing.Point(15, 21);
+            this.DescLabel.Name = "DescLabel";
+            this.DescLabel.Size = new System.Drawing.Size(279, 15);
+            this.DescLabel.TabIndex = 30;
+            this.DescLabel.Text = "*Currently app works only with numeric data types*";
             // 
             // Form1
             // 
@@ -668,6 +681,7 @@ namespace MP2
         private System.Windows.Forms.Button SelectOutputSetPath;
         private System.Windows.Forms.TextBox OutputSetPathText;
         private System.Windows.Forms.ComboBox OutputAttributeComboBox;
+        private System.Windows.Forms.Label DescLabel;
     }
 }
 

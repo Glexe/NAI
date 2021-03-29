@@ -29,7 +29,7 @@ namespace MP2.Models
         {
             if (dataSet == DataSet.NONE) return null;
             dataSets.TryGetValue(dataSet, out List<UniversalObject> tmpList);
-            if (tmpList.Count == 0) return null;
+            if (tmpList == null) return null;
             string[] headers = null;
             switch (dataType)
             {
