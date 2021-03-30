@@ -47,15 +47,16 @@ namespace MP2
             this.SelectTrainSetPath = new System.Windows.Forms.Button();
             this.TrainSetPathText = new System.Windows.Forms.TextBox();
             this.MenuPanel = new System.Windows.Forms.Panel();
-            this.ConditionTextBox = new System.Windows.Forms.TextBox();
             this.ConditionPanel = new System.Windows.Forms.Panel();
+            this.ConditionTextBox = new System.Windows.Forms.TextBox();
             this.OperatorChooserComboBox = new System.Windows.Forms.ComboBox();
+            this.InvalidConditionLabel = new System.Windows.Forms.Label();
             this.DescLabel = new System.Windows.Forms.Label();
             this.OutputAttributeComboBox = new System.Windows.Forms.ComboBox();
             this.MaxErrorBox = new System.Windows.Forms.TextBox();
             this.ThresholdBox = new System.Windows.Forms.TextBox();
             this.LearningRateBox = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.ResultLabel = new System.Windows.Forms.Label();
             this.ResultTextBox = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.TestDataTextBox = new System.Windows.Forms.TextBox();
@@ -74,7 +75,10 @@ namespace MP2
             this.StartBtn = new System.Windows.Forms.Button();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.InvalidConditionLabel = new System.Windows.Forms.Label();
+            this.correctCountLabel = new System.Windows.Forms.Label();
+            this.IncorrectCountLabel = new System.Windows.Forms.Label();
+            this.AccuracyLabel = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
@@ -309,13 +313,17 @@ namespace MP2
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.MenuPanel.Controls.Add(this.textBox1);
+            this.MenuPanel.Controls.Add(this.AccuracyLabel);
+            this.MenuPanel.Controls.Add(this.IncorrectCountLabel);
+            this.MenuPanel.Controls.Add(this.correctCountLabel);
             this.MenuPanel.Controls.Add(this.ConditionPanel);
             this.MenuPanel.Controls.Add(this.DescLabel);
             this.MenuPanel.Controls.Add(this.OutputAttributeComboBox);
             this.MenuPanel.Controls.Add(this.MaxErrorBox);
             this.MenuPanel.Controls.Add(this.ThresholdBox);
             this.MenuPanel.Controls.Add(this.LearningRateBox);
-            this.MenuPanel.Controls.Add(this.label10);
+            this.MenuPanel.Controls.Add(this.ResultLabel);
             this.MenuPanel.Controls.Add(this.ResultTextBox);
             this.MenuPanel.Controls.Add(this.label9);
             this.MenuPanel.Controls.Add(this.TestDataTextBox);
@@ -339,14 +347,6 @@ namespace MP2
             this.MenuPanel.Size = new System.Drawing.Size(763, 554);
             this.MenuPanel.TabIndex = 4;
             // 
-            // ConditionTextBox
-            // 
-            this.ConditionTextBox.Location = new System.Drawing.Point(49, 0);
-            this.ConditionTextBox.Multiline = true;
-            this.ConditionTextBox.Name = "ConditionTextBox";
-            this.ConditionTextBox.Size = new System.Drawing.Size(51, 25);
-            this.ConditionTextBox.TabIndex = 31;
-            // 
             // ConditionPanel
             // 
             this.ConditionPanel.BackColor = System.Drawing.Color.Transparent;
@@ -358,6 +358,15 @@ namespace MP2
             this.ConditionPanel.Size = new System.Drawing.Size(342, 25);
             this.ConditionPanel.TabIndex = 33;
             this.ConditionPanel.Visible = false;
+            // 
+            // ConditionTextBox
+            // 
+            this.ConditionTextBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.ConditionTextBox.Location = new System.Drawing.Point(49, 0);
+            this.ConditionTextBox.Name = "ConditionTextBox";
+            this.ConditionTextBox.Size = new System.Drawing.Size(62, 25);
+            this.ConditionTextBox.TabIndex = 31;
+            this.ConditionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // OperatorChooserComboBox
             // 
@@ -371,6 +380,18 @@ namespace MP2
             this.OperatorChooserComboBox.Name = "OperatorChooserComboBox";
             this.OperatorChooserComboBox.Size = new System.Drawing.Size(43, 25);
             this.OperatorChooserComboBox.TabIndex = 32;
+            // 
+            // InvalidConditionLabel
+            // 
+            this.InvalidConditionLabel.AutoSize = true;
+            this.InvalidConditionLabel.Font = new System.Drawing.Font("Nirmala UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+            this.InvalidConditionLabel.ForeColor = System.Drawing.Color.Maroon;
+            this.InvalidConditionLabel.Location = new System.Drawing.Point(119, 3);
+            this.InvalidConditionLabel.Name = "InvalidConditionLabel";
+            this.InvalidConditionLabel.Size = new System.Drawing.Size(206, 17);
+            this.InvalidConditionLabel.TabIndex = 34;
+            this.InvalidConditionLabel.Text = "Please provide a valid condition";
+            this.InvalidConditionLabel.Visible = false;
             // 
             // DescLabel
             // 
@@ -438,20 +459,21 @@ namespace MP2
             this.LearningRateBox.Text = "0.5";
             this.LearningRateBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // label10
+            // ResultLabel
             // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.label10.Location = new System.Drawing.Point(576, 294);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(57, 21);
-            this.label10.TabIndex = 25;
-            this.label10.Text = "Result";
+            this.ResultLabel.AutoSize = true;
+            this.ResultLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ResultLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.ResultLabel.Location = new System.Drawing.Point(576, 294);
+            this.ResultLabel.Name = "ResultLabel";
+            this.ResultLabel.Size = new System.Drawing.Size(57, 21);
+            this.ResultLabel.TabIndex = 25;
+            this.ResultLabel.Text = "Result";
             // 
             // ResultTextBox
             // 
             this.ResultTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.ResultTextBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F);
             this.ResultTextBox.Location = new System.Drawing.Point(580, 318);
             this.ResultTextBox.Multiline = true;
             this.ResultTextBox.Name = "ResultTextBox";
@@ -649,17 +671,51 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // InvalidConditionLabel
+            // correctCountLabel
             // 
-            this.InvalidConditionLabel.AutoSize = true;
-            this.InvalidConditionLabel.Font = new System.Drawing.Font("Nirmala UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
-            this.InvalidConditionLabel.ForeColor = System.Drawing.Color.Maroon;
-            this.InvalidConditionLabel.Location = new System.Drawing.Point(119, 3);
-            this.InvalidConditionLabel.Name = "InvalidConditionLabel";
-            this.InvalidConditionLabel.Size = new System.Drawing.Size(206, 17);
-            this.InvalidConditionLabel.TabIndex = 34;
-            this.InvalidConditionLabel.Text = "Please provide a valid condition";
-            this.InvalidConditionLabel.Visible = false;
+            this.correctCountLabel.AutoSize = true;
+            this.correctCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.correctCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.correctCountLabel.Location = new System.Drawing.Point(576, 219);
+            this.correctCountLabel.Name = "correctCountLabel";
+            this.correctCountLabel.Size = new System.Drawing.Size(69, 21);
+            this.correctCountLabel.TabIndex = 34;
+            this.correctCountLabel.Text = "Correct:";
+            // 
+            // IncorrectCountLabel
+            // 
+            this.IncorrectCountLabel.AutoSize = true;
+            this.IncorrectCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.IncorrectCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.IncorrectCountLabel.Location = new System.Drawing.Point(576, 240);
+            this.IncorrectCountLabel.Name = "IncorrectCountLabel";
+            this.IncorrectCountLabel.Size = new System.Drawing.Size(82, 21);
+            this.IncorrectCountLabel.TabIndex = 35;
+            this.IncorrectCountLabel.Text = "Incorrect:";
+            // 
+            // AccuracyLabel
+            // 
+            this.AccuracyLabel.AutoSize = true;
+            this.AccuracyLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.AccuracyLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.AccuracyLabel.Location = new System.Drawing.Point(576, 261);
+            this.AccuracyLabel.Name = "AccuracyLabel";
+            this.AccuracyLabel.Size = new System.Drawing.Size(83, 21);
+            this.AccuracyLabel.TabIndex = 36;
+            this.AccuracyLabel.Text = "Accuracy:";
+            // 
+            // textBox1
+            // 
+            this.textBox1.AutoCompleteCustomSource.AddRange(new string[] {
+            "asd"});
+            this.textBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.textBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.textBox1.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.textBox1.Location = new System.Drawing.Point(370, 290);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(62, 25);
+            this.textBox1.TabIndex = 35;
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Form1
             // 
@@ -725,7 +781,7 @@ namespace MP2
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox TestDataTextBox;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label ResultLabel;
         private System.Windows.Forms.TextBox ResultTextBox;
         private System.Windows.Forms.TextBox MaxErrorBox;
         private System.Windows.Forms.TextBox ThresholdBox;
@@ -739,6 +795,10 @@ namespace MP2
         private System.Windows.Forms.TextBox ConditionTextBox;
         private System.Windows.Forms.Panel ConditionPanel;
         private System.Windows.Forms.Label InvalidConditionLabel;
+        private System.Windows.Forms.Label correctCountLabel;
+        private System.Windows.Forms.Label AccuracyLabel;
+        private System.Windows.Forms.Label IncorrectCountLabel;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

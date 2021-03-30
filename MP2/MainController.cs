@@ -59,30 +59,26 @@ namespace MP2
             trainer.Train(inputs, outputs, data.LearningRate, data.Epoch, data.Perceptron);
         }
 
-        public static string TestSession(TrainData data)
+        public static void TestSession(TrainData data, out int correctCount, out int incorrectCount, out float accuracy, out string summary)
         {
             data.TransformData(out double[][] inputs, out double[] outputs);
 
             float correct = 0;
             float incorrect = 0;
-            string answers = "";
-
-            /*for (int i = 0; i < inputs.Length; i++)
-            {
-                if (data.Perceptron.GetOutput(inputs[i]) == outputs[i]) correct++;
-                else incorrect++;
-            }*/
+            string summaryTmp = "";
 
             for (int i = 0; i < inputs.Length; i++)
             {
                 var res = data.Perceptron.GetOutput(inputs[i]);
                 if (res == outputs[i]) correct++;
                 else incorrect++;
-                answers += $"input: {inputs[i][1]}, out: {outputs[i]}, res: {res}\r\n";
+                summaryTmp += $"{i})    GivenInput: [{string.Join(", ", inputs[i])}]\r\n    WantedResult: {outputs[i]}\r\n    ActualResult: {res}\r\n";
             }
 
-            float accuracy = correct / (correct + incorrect);
-            return $"Correct: {correct} \r\nIncorrect: {incorrect} \r\nAccuracy: {accuracy}\r\n{answers}";
+            correctCount = (int)correct;
+            incorrectCount = (int)incorrect;
+            accuracy = ((int)((correct / (correct + incorrect)) * 100));
+            summary = summaryTmp;
         }
 
         public static Predicate<Attribute> CreateCondition(string @operator, string value)

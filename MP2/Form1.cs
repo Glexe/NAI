@@ -77,6 +77,9 @@ namespace MP2
             InitializeFields();  
         }
 
+
+        #region Events
+
         private void OperatorChooserComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             ValidateCondition();
@@ -86,8 +89,6 @@ namespace MP2
         {
             ValidateCondition();
         }
-
-        #region Events
 
         private void AttributesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
@@ -112,17 +113,8 @@ namespace MP2
             var status = item != null;
             if (status) ValidateCondition();
             ConditionPanel.Visible = status;
-            if(_headers_string != null && _headers_double != null)
-            {
-                if (_headers_double.Contains(item.ToString()))
-                {
-                    SetOperatorsList(InputManager.DataType.DOUBLE);
-                }
-                else if (_headers_string.Contains(item.ToString()))
-                {
-                    SetOperatorsList(InputManager.DataType.STRING);
-                }
-            }
+
+            SetOperatorsList(GetAttributeDataType(item.ToString()));
         }
 
         #region TextBox_TextChanged
@@ -301,18 +293,15 @@ namespace MP2
             var doubleRegex = @"^\d*\.{0,1}\d+$";
             var stringRegex = @"^.+$";
             Regex regex;
-            
-            if (_headers_double.Contains(OutputAttributeComboBox.SelectedItem.ToString()))
+            switch (GetAttributeDataType(OutputAttributeComboBox.SelectedItem.ToString()))
             {
-                regex = new Regex(doubleRegex);
-            }
-            else if (_headers_string.Contains(OutputAttributeComboBox.SelectedItem.ToString()))
-            {
-                regex = new Regex(stringRegex);
-            }
-            else
-            {
-                throw new Exception("Reload data");
+                case DataType.DOUBLE:
+                    regex = new Regex(doubleRegex);
+                    break;
+                case DataType.STRING:
+                    regex = new Regex(stringRegex);
+                    break;
+                default: throw new ArgumentException("Checked attribute doesnt exist");
             }
             
             if(!regex.IsMatch(ConditionTextBox.Text) || OperatorChooserComboBox.SelectedItem is null)
@@ -325,21 +314,12 @@ namespace MP2
             }
         }
 
-        
-
-        private bool test()
-        {
-            double d1 = 2.0;
-            Predicate<dynamic> predicate = o1 => o1 == 2;
-            return predicate.Invoke(d1);
-        }
-
         private void LoadMenuPage()
         {
             if (_trainSetPath != null || _testSetPath != null)
             {
-                ResultTextBox.Text = test().ToString();
                 ConditionPanel.Visible = false;
+                ResultTextBox.Text = "";
                 RefreshDatabase();
 
                 var trainHeaders_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.DOUBLE);
@@ -359,6 +339,19 @@ namespace MP2
 
                 InitComboBox(trainHeaders_string.Concat(trainHeaders_double).ToArray());
             }
+        }
+
+        private DataType GetAttributeDataType(string attribute)
+        {
+            if(_headers_double is null || _headers_string is null)
+            {
+                _headers_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.DOUBLE);
+                _headers_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.STRING);
+            }
+
+            if (_headers_double.Contains(attribute)) return DataType.DOUBLE;
+            else if (_headers_string.Contains(attribute)) return DataType.STRING;
+            throw new ArgumentException("Invalid attribute");
         }
 
         private void RefreshDatabase()
@@ -397,13 +390,9 @@ namespace MP2
             return checkedItemsList.ToArray();
         }
 
-        private Predicate<object> GetPredicate()
-        {
-            return new Predicate<object>(k => (bool) k);
-        }
-
         private void PushSession(bool useNewPerceptron = true)
         {
+            //textBox1.AutoCompleteCustomSource.Add
             ReadTrainSpecs(out TrainSpecs specs);
             if(useNewPerceptron || _perceptron is null)
             {
@@ -411,10 +400,10 @@ namespace MP2
             }
             _perceptron.Threshold = specs.threshold;
 
-            //InputManager.DataSet dataSet = InputManager.DataSet.TRAIN;
-            DataType dataType = DataType.DOUBLE;
-            //Predicate<object> predicate = new Predicate<object>(k => (bool)k);
+
             var pred = MainController.CreateCondition(OperatorChooserComboBox.SelectedItem.ToString(), ConditionTextBox.Text);
+            var dataType = GetAttributeDataType(specs.outputAttribute);
+            
             TrainData trainData = new TrainData
             {
                 OutputAttribute = specs.outputAttribute,
@@ -424,14 +413,21 @@ namespace MP2
                 @Perceptron = _perceptron,
                 @Predicate = pred,
                 @DataSet = InputManager.DataSet.TRAIN,
-                @DataType = dataType
+                OutputDataType = dataType
             };
 
             
-
             MainController.TrainSession(trainData);
             trainData.DataSet = InputManager.DataSet.TEST;
-            ResultTextBox.Text += "\r\n" + MainController.TestSession(trainData);
+
+            MainController.TestSession(trainData, out int correctCount, out int incorrectCount, out float accuracy, out string summary);
+
+            correctCountLabel.Text = $"Correct: {correctCount}";
+            IncorrectCountLabel.Text = $"Incorrect: {incorrectCount}";
+            if (accuracy > 50) AccuracyLabel.ForeColor = Color.Green;
+            //ConditionTextBox.Text.le
+            AccuracyLabel.Text = $"Accuracy: {accuracy}%";
+            ResultTextBox.Text = summary;
         }
     }
 }

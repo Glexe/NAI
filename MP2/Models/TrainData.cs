@@ -16,7 +16,7 @@ namespace MP2.Models
         public Perceptron @Perceptron { get; set; }
         public Predicate<Attribute> @Predicate { get; set; }
         public DataSet @DataSet { get; set; }
-        public DataType @DataType { get; set; }
+        public DataType OutputDataType { get; set; }
 
         public void TransformData(out double[][] input, out double[] output)
         {
@@ -38,7 +38,7 @@ namespace MP2.Models
 
                 //output
                 object value = null;
-                switch (@DataType)
+                switch (OutputDataType)
                 {
                     case DataType.DOUBLE:
                         value = item.DoubleValues.Single(k => k.Key == OutputAttribute).Value;
@@ -47,9 +47,9 @@ namespace MP2.Models
                         value = item.StringValues.Single(k => k.Key == OutputAttribute).Value;
                         break;
                     default:
-                        throw new ArgumentNullException($"Data type <{@DataType}> was not implemented in MainController :: DataTransformer");
+                        throw new ArgumentNullException($"Data type <{OutputDataType}> was not implemented in MainController :: DataTransformer");
                 }
-                outputs.Add(@Predicate.Invoke(new Attribute("asd", value.ToString())) ? 1 : 0);
+                outputs.Add(@Predicate.Invoke(new Attribute("atr", value.ToString())) ? 1 : 0);
                 //
 
             }
@@ -57,6 +57,5 @@ namespace MP2.Models
             input = inputs.ToArray();
             output = outputs.ToArray();
         }
-
     }
 }
