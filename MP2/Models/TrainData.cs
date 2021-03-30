@@ -7,7 +7,7 @@ using static MP2.Models.InputManager;
 
 namespace MP2.Models
 {
-    public class TrainData : IOperatorExtension
+    public class TrainData
     {
         public string OutputAttribute { get; set; }
         public string[] InputAttributes { get; set; }

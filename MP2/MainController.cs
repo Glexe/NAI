@@ -72,7 +72,7 @@ namespace MP2
                 var res = data.Perceptron.GetOutput(inputs[i]);
                 if (res == outputs[i]) correct++;
                 else incorrect++;
-                summaryTmp += $"{i})    GivenInput: [{string.Join(", ", inputs[i])}]\r\n    WantedResult: {outputs[i]}\r\n    ActualResult: {res}\r\n";
+                summaryTmp += $"GivenInput: [{string.Join(", ", inputs[i])}]\r\nWantedResult: {outputs[i]}\r\nActualResult: {res}\r\n\r\n";
             }
 
             correctCount = (int)correct;

@@ -47,11 +47,15 @@ namespace MP2
             this.SelectTrainSetPath = new System.Windows.Forms.Button();
             this.TrainSetPathText = new System.Windows.Forms.TextBox();
             this.MenuPanel = new System.Windows.Forms.Panel();
+            this.ContinueTrainingBtn = new System.Windows.Forms.Button();
+            this.TestResultPanel = new System.Windows.Forms.Panel();
+            this.IncorrectCountLabel = new System.Windows.Forms.Label();
+            this.AccuracyLabel = new System.Windows.Forms.Label();
+            this.correctCountLabel = new System.Windows.Forms.Label();
             this.ConditionPanel = new System.Windows.Forms.Panel();
             this.ConditionTextBox = new System.Windows.Forms.TextBox();
             this.OperatorChooserComboBox = new System.Windows.Forms.ComboBox();
             this.InvalidConditionLabel = new System.Windows.Forms.Label();
-            this.DescLabel = new System.Windows.Forms.Label();
             this.OutputAttributeComboBox = new System.Windows.Forms.ComboBox();
             this.MaxErrorBox = new System.Windows.Forms.TextBox();
             this.ThresholdBox = new System.Windows.Forms.TextBox();
@@ -72,23 +76,22 @@ namespace MP2
             this.EpochTrackBar = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
             this.AttributesListBox = new System.Windows.Forms.CheckedListBox();
-            this.StartBtn = new System.Windows.Forms.Button();
+            this.BeginNewTrainingBtn = new System.Windows.Forms.Button();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.correctCountLabel = new System.Windows.Forms.Label();
-            this.IncorrectCountLabel = new System.Windows.Forms.Label();
-            this.AccuracyLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TrainingButtonsPanel = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
             this.SettingsPanel.SuspendLayout();
             this.MenuPanel.SuspendLayout();
+            this.TestResultPanel.SuspendLayout();
             this.ConditionPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxErrorTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).BeginInit();
+            this.TrainingButtonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -206,7 +209,7 @@ namespace MP2
             this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.SettingsPanel.Location = new System.Drawing.Point(141, 0);
             this.SettingsPanel.Name = "SettingsPanel";
-            this.SettingsPanel.Size = new System.Drawing.Size(763, 18);
+            this.SettingsPanel.Size = new System.Drawing.Size(763, 33);
             this.SettingsPanel.TabIndex = 1;
             // 
             // label11
@@ -313,12 +316,9 @@ namespace MP2
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
-            this.MenuPanel.Controls.Add(this.textBox1);
-            this.MenuPanel.Controls.Add(this.AccuracyLabel);
-            this.MenuPanel.Controls.Add(this.IncorrectCountLabel);
-            this.MenuPanel.Controls.Add(this.correctCountLabel);
+            this.MenuPanel.Controls.Add(this.TrainingButtonsPanel);
+            this.MenuPanel.Controls.Add(this.TestResultPanel);
             this.MenuPanel.Controls.Add(this.ConditionPanel);
-            this.MenuPanel.Controls.Add(this.DescLabel);
             this.MenuPanel.Controls.Add(this.OutputAttributeComboBox);
             this.MenuPanel.Controls.Add(this.MaxErrorBox);
             this.MenuPanel.Controls.Add(this.ThresholdBox);
@@ -339,13 +339,68 @@ namespace MP2
             this.MenuPanel.Controls.Add(this.EpochTrackBar);
             this.MenuPanel.Controls.Add(this.label3);
             this.MenuPanel.Controls.Add(this.AttributesListBox);
-            this.MenuPanel.Controls.Add(this.StartBtn);
             this.MenuPanel.Controls.Add(this.TrainDataTextBox);
             this.MenuPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MenuPanel.Location = new System.Drawing.Point(141, 0);
             this.MenuPanel.Name = "MenuPanel";
             this.MenuPanel.Size = new System.Drawing.Size(763, 554);
             this.MenuPanel.TabIndex = 4;
+            // 
+            // ContinueTrainingBtn
+            // 
+            this.ContinueTrainingBtn.Font = new System.Drawing.Font("Nirmala UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ContinueTrainingBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.ContinueTrainingBtn.Location = new System.Drawing.Point(6, 60);
+            this.ContinueTrainingBtn.Name = "ContinueTrainingBtn";
+            this.ContinueTrainingBtn.Size = new System.Drawing.Size(139, 45);
+            this.ContinueTrainingBtn.TabIndex = 38;
+            this.ContinueTrainingBtn.Text = "Continue training";
+            this.ContinueTrainingBtn.UseVisualStyleBackColor = true;
+            this.ContinueTrainingBtn.Visible = false;
+            this.ContinueTrainingBtn.Click += new System.EventHandler(this.ContinueTrainingBtn_Click);
+            // 
+            // TestResultPanel
+            // 
+            this.TestResultPanel.Controls.Add(this.IncorrectCountLabel);
+            this.TestResultPanel.Controls.Add(this.AccuracyLabel);
+            this.TestResultPanel.Controls.Add(this.correctCountLabel);
+            this.TestResultPanel.Location = new System.Drawing.Point(578, 278);
+            this.TestResultPanel.Name = "TestResultPanel";
+            this.TestResultPanel.Size = new System.Drawing.Size(161, 84);
+            this.TestResultPanel.TabIndex = 37;
+            // 
+            // IncorrectCountLabel
+            // 
+            this.IncorrectCountLabel.AutoSize = true;
+            this.IncorrectCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.IncorrectCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.IncorrectCountLabel.Location = new System.Drawing.Point(3, 33);
+            this.IncorrectCountLabel.Name = "IncorrectCountLabel";
+            this.IncorrectCountLabel.Size = new System.Drawing.Size(82, 21);
+            this.IncorrectCountLabel.TabIndex = 35;
+            this.IncorrectCountLabel.Text = "Incorrect:";
+            // 
+            // AccuracyLabel
+            // 
+            this.AccuracyLabel.AutoSize = true;
+            this.AccuracyLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.AccuracyLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.AccuracyLabel.Location = new System.Drawing.Point(3, 54);
+            this.AccuracyLabel.Name = "AccuracyLabel";
+            this.AccuracyLabel.Size = new System.Drawing.Size(83, 21);
+            this.AccuracyLabel.TabIndex = 36;
+            this.AccuracyLabel.Text = "Accuracy:";
+            // 
+            // correctCountLabel
+            // 
+            this.correctCountLabel.AutoSize = true;
+            this.correctCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
+            this.correctCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.correctCountLabel.Location = new System.Drawing.Point(3, 12);
+            this.correctCountLabel.Name = "correctCountLabel";
+            this.correctCountLabel.Size = new System.Drawing.Size(69, 21);
+            this.correctCountLabel.TabIndex = 34;
+            this.correctCountLabel.Text = "Correct:";
             // 
             // ConditionPanel
             // 
@@ -355,7 +410,7 @@ namespace MP2
             this.ConditionPanel.Controls.Add(this.InvalidConditionLabel);
             this.ConditionPanel.Location = new System.Drawing.Point(183, 198);
             this.ConditionPanel.Name = "ConditionPanel";
-            this.ConditionPanel.Size = new System.Drawing.Size(342, 25);
+            this.ConditionPanel.Size = new System.Drawing.Size(389, 25);
             this.ConditionPanel.TabIndex = 33;
             this.ConditionPanel.Visible = false;
             // 
@@ -364,7 +419,7 @@ namespace MP2
             this.ConditionTextBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.ConditionTextBox.Location = new System.Drawing.Point(49, 0);
             this.ConditionTextBox.Name = "ConditionTextBox";
-            this.ConditionTextBox.Size = new System.Drawing.Size(62, 25);
+            this.ConditionTextBox.Size = new System.Drawing.Size(125, 25);
             this.ConditionTextBox.TabIndex = 31;
             this.ConditionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -386,23 +441,12 @@ namespace MP2
             this.InvalidConditionLabel.AutoSize = true;
             this.InvalidConditionLabel.Font = new System.Drawing.Font("Nirmala UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
             this.InvalidConditionLabel.ForeColor = System.Drawing.Color.Maroon;
-            this.InvalidConditionLabel.Location = new System.Drawing.Point(119, 3);
+            this.InvalidConditionLabel.Location = new System.Drawing.Point(180, 3);
             this.InvalidConditionLabel.Name = "InvalidConditionLabel";
             this.InvalidConditionLabel.Size = new System.Drawing.Size(206, 17);
             this.InvalidConditionLabel.TabIndex = 34;
             this.InvalidConditionLabel.Text = "Please provide a valid condition";
             this.InvalidConditionLabel.Visible = false;
-            // 
-            // DescLabel
-            // 
-            this.DescLabel.AutoSize = true;
-            this.DescLabel.Font = new System.Drawing.Font("Nirmala UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DescLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.DescLabel.Location = new System.Drawing.Point(15, 21);
-            this.DescLabel.Name = "DescLabel";
-            this.DescLabel.Size = new System.Drawing.Size(279, 15);
-            this.DescLabel.TabIndex = 30;
-            this.DescLabel.Text = "*Currently app works only with numeric data types*";
             // 
             // OutputAttributeComboBox
             // 
@@ -464,7 +508,7 @@ namespace MP2
             this.ResultLabel.AutoSize = true;
             this.ResultLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ResultLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.ResultLabel.Location = new System.Drawing.Point(576, 294);
+            this.ResultLabel.Location = new System.Drawing.Point(574, 365);
             this.ResultLabel.Name = "ResultLabel";
             this.ResultLabel.Size = new System.Drawing.Size(57, 21);
             this.ResultLabel.TabIndex = 25;
@@ -474,7 +518,7 @@ namespace MP2
             // 
             this.ResultTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ResultTextBox.Font = new System.Drawing.Font("Nirmala UI", 9.75F);
-            this.ResultTextBox.Location = new System.Drawing.Point(580, 318);
+            this.ResultTextBox.Location = new System.Drawing.Point(578, 389);
             this.ResultTextBox.Multiline = true;
             this.ResultTextBox.Name = "ResultTextBox";
             this.ResultTextBox.ReadOnly = true;
@@ -644,17 +688,17 @@ namespace MP2
             this.AttributesListBox.TabIndex = 8;
             this.AttributesListBox.ThreeDCheckBoxes = true;
             // 
-            // StartBtn
+            // BeginNewTrainingBtn
             // 
-            this.StartBtn.Font = new System.Drawing.Font("Nirmala UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StartBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.StartBtn.Location = new System.Drawing.Point(341, 374);
-            this.StartBtn.Name = "StartBtn";
-            this.StartBtn.Size = new System.Drawing.Size(139, 45);
-            this.StartBtn.TabIndex = 3;
-            this.StartBtn.Text = "Start";
-            this.StartBtn.UseVisualStyleBackColor = true;
-            this.StartBtn.Click += new System.EventHandler(this.StartBtn_Click);
+            this.BeginNewTrainingBtn.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BeginNewTrainingBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.BeginNewTrainingBtn.Location = new System.Drawing.Point(6, 9);
+            this.BeginNewTrainingBtn.Name = "BeginNewTrainingBtn";
+            this.BeginNewTrainingBtn.Size = new System.Drawing.Size(139, 45);
+            this.BeginNewTrainingBtn.TabIndex = 3;
+            this.BeginNewTrainingBtn.Text = "Begin new training";
+            this.BeginNewTrainingBtn.UseVisualStyleBackColor = true;
+            this.BeginNewTrainingBtn.Click += new System.EventHandler(this.BeginNewTrainingBtn_Click);
             // 
             // TrainDataTextBox
             // 
@@ -671,51 +715,15 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // correctCountLabel
+            // TrainingButtonsPanel
             // 
-            this.correctCountLabel.AutoSize = true;
-            this.correctCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
-            this.correctCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.correctCountLabel.Location = new System.Drawing.Point(576, 219);
-            this.correctCountLabel.Name = "correctCountLabel";
-            this.correctCountLabel.Size = new System.Drawing.Size(69, 21);
-            this.correctCountLabel.TabIndex = 34;
-            this.correctCountLabel.Text = "Correct:";
-            // 
-            // IncorrectCountLabel
-            // 
-            this.IncorrectCountLabel.AutoSize = true;
-            this.IncorrectCountLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
-            this.IncorrectCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.IncorrectCountLabel.Location = new System.Drawing.Point(576, 240);
-            this.IncorrectCountLabel.Name = "IncorrectCountLabel";
-            this.IncorrectCountLabel.Size = new System.Drawing.Size(82, 21);
-            this.IncorrectCountLabel.TabIndex = 35;
-            this.IncorrectCountLabel.Text = "Incorrect:";
-            // 
-            // AccuracyLabel
-            // 
-            this.AccuracyLabel.AutoSize = true;
-            this.AccuracyLabel.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold);
-            this.AccuracyLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.AccuracyLabel.Location = new System.Drawing.Point(576, 261);
-            this.AccuracyLabel.Name = "AccuracyLabel";
-            this.AccuracyLabel.Size = new System.Drawing.Size(83, 21);
-            this.AccuracyLabel.TabIndex = 36;
-            this.AccuracyLabel.Text = "Accuracy:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.AutoCompleteCustomSource.AddRange(new string[] {
-            "asd"});
-            this.textBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.textBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.textBox1.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.textBox1.Location = new System.Drawing.Point(370, 290);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(62, 25);
-            this.textBox1.TabIndex = 35;
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TrainingButtonsPanel.Controls.Add(this.BeginNewTrainingBtn);
+            this.TrainingButtonsPanel.Controls.Add(this.ContinueTrainingBtn);
+            this.TrainingButtonsPanel.Enabled = false;
+            this.TrainingButtonsPanel.Location = new System.Drawing.Point(416, 399);
+            this.TrainingButtonsPanel.Name = "TrainingButtonsPanel";
+            this.TrainingButtonsPanel.Size = new System.Drawing.Size(153, 118);
+            this.TrainingButtonsPanel.TabIndex = 39;
             // 
             // Form1
             // 
@@ -738,12 +746,15 @@ namespace MP2
             this.SettingsPanel.PerformLayout();
             this.MenuPanel.ResumeLayout(false);
             this.MenuPanel.PerformLayout();
+            this.TestResultPanel.ResumeLayout(false);
+            this.TestResultPanel.PerformLayout();
             this.ConditionPanel.ResumeLayout(false);
             this.ConditionPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxErrorTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).EndInit();
+            this.TrainingButtonsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -764,7 +775,7 @@ namespace MP2
         private System.Windows.Forms.Button SettingsBtn;
         private System.Windows.Forms.Panel MenuPanel;
         private System.Windows.Forms.TextBox TrainDataTextBox;
-        private System.Windows.Forms.Button StartBtn;
+        private System.Windows.Forms.Button BeginNewTrainingBtn;
         private System.Windows.Forms.Button ExitBtn;
         private System.Windows.Forms.CheckedListBox AttributesListBox;
         private System.Windows.Forms.Label label7;
@@ -790,7 +801,6 @@ namespace MP2
         private System.Windows.Forms.Button SelectOutputSetPath;
         private System.Windows.Forms.TextBox OutputSetPathText;
         private System.Windows.Forms.ComboBox OutputAttributeComboBox;
-        private System.Windows.Forms.Label DescLabel;
         private System.Windows.Forms.ComboBox OperatorChooserComboBox;
         private System.Windows.Forms.TextBox ConditionTextBox;
         private System.Windows.Forms.Panel ConditionPanel;
@@ -798,7 +808,9 @@ namespace MP2
         private System.Windows.Forms.Label correctCountLabel;
         private System.Windows.Forms.Label AccuracyLabel;
         private System.Windows.Forms.Label IncorrectCountLabel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Panel TestResultPanel;
+        private System.Windows.Forms.Button ContinueTrainingBtn;
+        private System.Windows.Forms.Panel TrainingButtonsPanel;
     }
 }
 

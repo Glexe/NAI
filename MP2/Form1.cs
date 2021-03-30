@@ -49,6 +49,8 @@ namespace MP2
         private string _outputSetPath;
 
         private Perceptron _perceptron;
+        private List<string> _checkedInputAttributes = new List<string>(); //coz listBox.checkedItems is bugged 
+
 
         public Form1()
         {
@@ -69,6 +71,9 @@ namespace MP2
             OutputSetPathText.TextChanged += OutputSetPathText_TextChanged;
             ConditionTextBox.TextChanged += ConditionTextBox_TextChanged;
 
+            TrainDataTextBox.TextChanged += TrainDataTextBox_TextChanged;
+            TestDataTextBox.TextChanged += TestDataTextBox_TextChanged;
+
             AttributesListBox.ItemCheck += AttributesListBox_ItemCheck;
 
             OutputAttributeComboBox.SelectedValueChanged += OutputAttributeComboBox_SelectedValueChanged;
@@ -80,18 +85,38 @@ namespace MP2
 
         #region Events
 
+        private void TestDataTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
+
+        private void TrainDataTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
+
         private void OperatorChooserComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             ValidateCondition();
+            TrainingButtonsPanel.Enabled = ValidateInput();
         }
 
         private void ConditionTextBox_TextChanged(object sender, EventArgs e)
         {
             ValidateCondition();
+            TrainingButtonsPanel.Enabled = ValidateInput();
         }
 
         private void AttributesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
+            var attributeName = AttributesListBox.Items[e.Index].ToString();
+            var ifExists = _checkedInputAttributes.Exists(a => a == attributeName);
+
+            if(e.NewValue == CheckState.Checked && !ifExists) _checkedInputAttributes.Add(attributeName);
+            else if(e.NewValue == CheckState.Unchecked && ifExists) _checkedInputAttributes.Remove(attributeName);
+
+            _checkedInputAttributes = _checkedInputAttributes.Distinct().ToList();
+            
             var item = ((CheckedListBox)sender).Items[e.Index].ToString();
             if (e.NewValue == CheckState.Checked)
             {
@@ -105,6 +130,7 @@ namespace MP2
 
             var status = OutputAttributeComboBox.SelectedItem != null;
             ConditionPanel.Visible = status;
+            TrainingButtonsPanel.Enabled = ValidateInput();
         }
 
         private void OutputAttributeComboBox_SelectedValueChanged(object sender, EventArgs e)
@@ -115,6 +141,7 @@ namespace MP2
             ConditionPanel.Visible = status;
 
             SetOperatorsList(GetAttributeDataType(item.ToString()));
+            TrainingButtonsPanel.Enabled = ValidateInput();
         }
 
         #region TextBox_TextChanged
@@ -175,10 +202,14 @@ namespace MP2
             SwitchPage(AppStates.Settings);
         }
 
-        private void StartBtn_Click(object sender, EventArgs e)
+        private void BeginNewTrainingBtn_Click(object sender, EventArgs e)
         {
-            //TestDataTextBox.Text = "";
-            PushSession();
+            PushSession(useNewPerceptron:true);
+        }
+
+        private void ContinueTrainingBtn_Click(object sender, EventArgs e)
+        {
+            PushSession(useNewPerceptron: false);
         }
 
         private void ExitBtn_Click(object sender, EventArgs e)
@@ -288,6 +319,18 @@ namespace MP2
             }
         }
 
+        private bool ValidateInput()
+        {
+            if (OperatorChooserComboBox.SelectedItem is null) return false;
+            if (OutputAttributeComboBox.SelectedItem is null) return false;
+            if (ConditionTextBox.Text == string.Empty) return false;
+            if (TrainDataTextBox.Text == string.Empty) return false;
+            if (TestDataTextBox.Text == string.Empty) return false;
+            if (_checkedInputAttributes.Count == 0) return false;
+            if (InvalidConditionLabel.Visible == true) return false;
+            return true;
+        }
+
         private void ValidateCondition()
         {
             var doubleRegex = @"^\d*\.{0,1}\d+$";
@@ -316,10 +359,10 @@ namespace MP2
 
         private void LoadMenuPage()
         {
-            if (_trainSetPath != null || _testSetPath != null)
-            {
-                ConditionPanel.Visible = false;
-                ResultTextBox.Text = "";
+            TrainingButtonsPanel.Enabled = false;
+            if (_trainSetPath is null || _testSetPath is null) throw new NullReferenceException("Provide valid file pathes");
+
+                DefaultPage();
                 RefreshDatabase();
 
                 var trainHeaders_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.DOUBLE);
@@ -338,7 +381,6 @@ namespace MP2
                 _headers_string = trainHeaders_string;
 
                 InitComboBox(trainHeaders_string.Concat(trainHeaders_double).ToArray());
-            }
         }
 
         private DataType GetAttributeDataType(string attribute)
@@ -381,18 +423,33 @@ namespace MP2
 
         private string[] GetInputAttributes()
         {
-            List<string> checkedItemsList = new List<string>();
-            for(int i=0; i<AttributesListBox.CheckedItems.Count; i++)
-            {
-                checkedItemsList.Add(AttributesListBox.CheckedItems[i].ToString());
-            }
+            return _checkedInputAttributes.ToArray();
+        }
 
-            return checkedItemsList.ToArray();
+        private void ChangeAccuracyColor(float? value)
+        {
+            Color labelColor = Color.Black;
+            if (value is null) labelColor = Color.Black;
+            else if (value < 35) labelColor = Color.Red;
+            else if (value >= 35 && value < 65) labelColor = Color.Yellow;
+            else if (value >= 65) labelColor = Color.Green;
+
+            AccuracyLabel.ForeColor = labelColor;
+        }
+
+        private void DefaultPage()
+        {
+            correctCountLabel.Text = "Correct: ";
+            IncorrectCountLabel.Text = "Incorrect: ";
+            AccuracyLabel.Text = "Accuracy: ";
+            ChangeAccuracyColor(null);
+            ContinueTrainingBtn.Visible = false;
+            ConditionPanel.Visible = false;
+            ResultTextBox.Text = "";
         }
 
         private void PushSession(bool useNewPerceptron = true)
         {
-            //textBox1.AutoCompleteCustomSource.Add
             ReadTrainSpecs(out TrainSpecs specs);
             if(useNewPerceptron || _perceptron is null)
             {
@@ -424,10 +481,12 @@ namespace MP2
 
             correctCountLabel.Text = $"Correct: {correctCount}";
             IncorrectCountLabel.Text = $"Incorrect: {incorrectCount}";
-            if (accuracy > 50) AccuracyLabel.ForeColor = Color.Green;
-            //ConditionTextBox.Text.le
             AccuracyLabel.Text = $"Accuracy: {accuracy}%";
+            ChangeAccuracyColor(accuracy);
             ResultTextBox.Text = summary;
+            ContinueTrainingBtn.Visible = true;
         }
+
+        
     }
 }

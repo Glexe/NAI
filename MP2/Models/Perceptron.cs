@@ -29,8 +29,8 @@ namespace MP2.Models
             Weights = new double[size];
             if (fillWithRandomValues)
             {
-                for (int i = 0; i < Weights.Length; i++) 
-                    Weights[i] = new Random().Next(0, 1);
+                for (int i = 0; i < Weights.Length; i++)
+                    Weights[i] = new Random().NextDouble();
             }
         }
 
