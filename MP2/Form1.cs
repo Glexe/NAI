@@ -60,7 +60,8 @@ namespace MP2
             _bttnDefaultColor = ColorsConfig.ButtonDefault;
             SwitchPage(AppStates.Menu);
 
-            //events
+            #region BindingToEvents
+
             EpochTrackBar.ValueChanged += EpochTrackBar_ValueChanged;
             LearningRateTrackBar.ValueChanged += LearningRateTrackBar_ValueChanged;
             ThresholdTrackBar.ValueChanged += ThresholdTrackBar_ValueChanged;
@@ -70,7 +71,6 @@ namespace MP2
             TestSetPathText.TextChanged += TestSetPathText_TextChanged;
             OutputSetPathText.TextChanged += OutputSetPathText_TextChanged;
             ConditionTextBox.TextChanged += ConditionTextBox_TextChanged;
-
             TrainDataTextBox.TextChanged += TrainDataTextBox_TextChanged;
             TestDataTextBox.TextChanged += TestDataTextBox_TextChanged;
 
@@ -79,33 +79,15 @@ namespace MP2
             OutputAttributeComboBox.SelectedValueChanged += OutputAttributeComboBox_SelectedValueChanged;
             OperatorChooserComboBox.SelectedValueChanged += OperatorChooserComboBox_SelectedValueChanged;
 
-            InitializeFields();  
+            #endregion
+
+            InitializeDefaultValues();  
         }
 
 
         #region Events
 
-        private void TestDataTextBox_TextChanged(object sender, EventArgs e)
-        {
-            TrainingButtonsPanel.Enabled = ValidateInput();
-        }
-
-        private void TrainDataTextBox_TextChanged(object sender, EventArgs e)
-        {
-            TrainingButtonsPanel.Enabled = ValidateInput();
-        }
-
-        private void OperatorChooserComboBox_SelectedValueChanged(object sender, EventArgs e)
-        {
-            ValidateCondition();
-            TrainingButtonsPanel.Enabled = ValidateInput();
-        }
-
-        private void ConditionTextBox_TextChanged(object sender, EventArgs e)
-        {
-            ValidateCondition();
-            TrainingButtonsPanel.Enabled = ValidateInput();
-        }
+        #region ItemChecked
 
         private void AttributesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
@@ -132,19 +114,25 @@ namespace MP2
             ConditionPanel.Visible = status;
             TrainingButtonsPanel.Enabled = ValidateInput();
         }
+        #endregion
 
-        private void OutputAttributeComboBox_SelectedValueChanged(object sender, EventArgs e)
+        #region TextChanged
+
+        private void TestDataTextBox_TextChanged(object sender, EventArgs e)
         {
-            var item = ((ComboBox)sender).SelectedItem;
-            var status = item != null;
-            if (status) ValidateCondition();
-            ConditionPanel.Visible = status;
-
-            SetOperatorsList(GetAttributeDataType(item.ToString()));
             TrainingButtonsPanel.Enabled = ValidateInput();
         }
 
-        #region TextBox_TextChanged
+        private void TrainDataTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
+
+        private void ConditionTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ValidateCondition();
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
 
         private void TestSetPathText_TextChanged(object sender, EventArgs e)
         {
@@ -162,7 +150,24 @@ namespace MP2
         }
         #endregion
 
-        #region TrackBar_ValueChanged
+        #region ValueChanged
+
+        private void OperatorChooserComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ValidateCondition();
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
+
+        private void OutputAttributeComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var item = ((ComboBox)sender).SelectedItem;
+            var status = item != null;
+            if (status) ValidateCondition();
+            ConditionPanel.Visible = status;
+
+            LoadOperators(GetAttributeDataType(item.ToString()));
+            TrainingButtonsPanel.Enabled = ValidateInput();
+        }
 
         private void MaxErrorTrackBar_ValueChanged(object sender, EventArgs e)
         {
@@ -184,7 +189,6 @@ namespace MP2
             EpochCountBox.Text = (((TrackBar)sender).Value * 5).ToString();
         }
         #endregion
-
         #endregion
 
         #region Button Clicks
@@ -248,7 +252,7 @@ namespace MP2
         }
         #endregion
 
-        private void InitializeFields()
+        private void InitializeDefaultValues()
         {
             EpochCountBox.Text = (EpochTrackBar.Value * 5).ToString();
             LearningRateBox.Text = (LearningRateTrackBar.Value * 0.05).ToString();
@@ -262,7 +266,7 @@ namespace MP2
             _testSetPath = TestSetPathText.Text;
         }
 
-        private void SetAttributes(params string[] @params)
+        private void LoadInputAttributes(params string[] @params)
         {
             AttributesListBox.Items.Clear();
             foreach (var field in @params)
@@ -271,7 +275,7 @@ namespace MP2
             }
         }
 
-        private void InitComboBox(params string[] @params)
+        private void LoadOutputAttribute(params string[] @params)
         {
             OutputAttributeComboBox.Items.Clear();
             foreach(var item in @params)
@@ -305,7 +309,7 @@ namespace MP2
             }
         }
 
-        private void SetOperatorsList(InputManager.DataType dataType)
+        private void LoadOperators(InputManager.DataType dataType)
         {
             ConditionTextBox.Text = "";
             OperatorChooserComboBox.Items.Clear();
@@ -373,14 +377,14 @@ namespace MP2
                 SetData(TrainDataTextBox, _trainSetPath);
                 
                 SetData(TestDataTextBox, _testSetPath);
-                SetAttributes(trainHeaders_double);
+                LoadInputAttributes(trainHeaders_double);
                 
                 var trainHeaders_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.STRING);
                 
                 _headers_double = trainHeaders_double;
                 _headers_string = trainHeaders_string;
 
-                InitComboBox(trainHeaders_string.Concat(trainHeaders_double).ToArray());
+                LoadOutputAttribute(trainHeaders_string.Concat(trainHeaders_double).ToArray());
         }
 
         private DataType GetAttributeDataType(string attribute)
@@ -412,18 +416,13 @@ namespace MP2
         {
             trainSpecs = new TrainSpecs
             {
-                inputAttributes = GetInputAttributes(),
+                inputAttributes = _checkedInputAttributes.ToArray(),
                 outputAttribute = OutputAttributeComboBox.Text,
                 learningRate = float.Parse(LearningRateBox.Text),
                 epoch = uint.Parse(EpochCountBox.Text),
                 threshold = float.Parse(ThresholdBox.Text),
                 maxError = float.Parse(MaxErrorBox.Text)
             };
-        }
-
-        private string[] GetInputAttributes()
-        {
-            return _checkedInputAttributes.ToArray();
         }
 
         private void ChangeAccuracyColor(float? value)
@@ -485,8 +484,6 @@ namespace MP2
             ChangeAccuracyColor(accuracy);
             ResultTextBox.Text = summary;
             ContinueTrainingBtn.Visible = true;
-        }
-
-        
+        }  
     }
 }
