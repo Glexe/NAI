@@ -38,7 +38,7 @@ namespace MP2.Models
         {
             for(int i=0; i<_wantedOutputs.Length; i++)
             {
-                int actualOutput = _perceptron.GetOutput(_inputs[i]);
+                int actualOutput = _perceptron.GetOutput(new Vector(_inputs[i]));
                 double error = (_wantedOutputs[i] - actualOutput);
                 _totalError += error;
 

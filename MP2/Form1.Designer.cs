@@ -30,6 +30,9 @@ namespace MP2
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ExitBtn = new System.Windows.Forms.Button();
             this.SettingsBtn = new System.Windows.Forms.Button();
@@ -47,6 +50,8 @@ namespace MP2
             this.SelectTrainSetPath = new System.Windows.Forms.Button();
             this.TrainSetPathText = new System.Windows.Forms.TextBox();
             this.MenuPanel = new System.Windows.Forms.Panel();
+            this.TrainingButtonsPanel = new System.Windows.Forms.Panel();
+            this.BeginNewTrainingBtn = new System.Windows.Forms.Button();
             this.ContinueTrainingBtn = new System.Windows.Forms.Button();
             this.TestResultPanel = new System.Windows.Forms.Panel();
             this.IncorrectCountLabel = new System.Windows.Forms.Label();
@@ -76,22 +81,22 @@ namespace MP2
             this.EpochTrackBar = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
             this.AttributesListBox = new System.Windows.Forms.CheckedListBox();
-            this.BeginNewTrainingBtn = new System.Windows.Forms.Button();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.TrainingButtonsPanel = new System.Windows.Forms.Panel();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
             this.SettingsPanel.SuspendLayout();
             this.MenuPanel.SuspendLayout();
+            this.TrainingButtonsPanel.SuspendLayout();
             this.TestResultPanel.SuspendLayout();
             this.ConditionPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxErrorTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).BeginInit();
-            this.TrainingButtonsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -197,6 +202,7 @@ namespace MP2
             // SettingsPanel
             // 
             this.SettingsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.SettingsPanel.Controls.Add(this.chart1);
             this.SettingsPanel.Controls.Add(this.label11);
             this.SettingsPanel.Controls.Add(this.SelectOutputSetPath);
             this.SettingsPanel.Controls.Add(this.OutputSetPathText);
@@ -209,7 +215,7 @@ namespace MP2
             this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.SettingsPanel.Location = new System.Drawing.Point(141, 0);
             this.SettingsPanel.Name = "SettingsPanel";
-            this.SettingsPanel.Size = new System.Drawing.Size(763, 33);
+            this.SettingsPanel.Size = new System.Drawing.Size(763, 554);
             this.SettingsPanel.TabIndex = 1;
             // 
             // label11
@@ -345,6 +351,28 @@ namespace MP2
             this.MenuPanel.Name = "MenuPanel";
             this.MenuPanel.Size = new System.Drawing.Size(763, 554);
             this.MenuPanel.TabIndex = 4;
+            // 
+            // TrainingButtonsPanel
+            // 
+            this.TrainingButtonsPanel.Controls.Add(this.BeginNewTrainingBtn);
+            this.TrainingButtonsPanel.Controls.Add(this.ContinueTrainingBtn);
+            this.TrainingButtonsPanel.Enabled = false;
+            this.TrainingButtonsPanel.Location = new System.Drawing.Point(416, 399);
+            this.TrainingButtonsPanel.Name = "TrainingButtonsPanel";
+            this.TrainingButtonsPanel.Size = new System.Drawing.Size(153, 118);
+            this.TrainingButtonsPanel.TabIndex = 39;
+            // 
+            // BeginNewTrainingBtn
+            // 
+            this.BeginNewTrainingBtn.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BeginNewTrainingBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.BeginNewTrainingBtn.Location = new System.Drawing.Point(6, 9);
+            this.BeginNewTrainingBtn.Name = "BeginNewTrainingBtn";
+            this.BeginNewTrainingBtn.Size = new System.Drawing.Size(139, 45);
+            this.BeginNewTrainingBtn.TabIndex = 3;
+            this.BeginNewTrainingBtn.Text = "Begin new training";
+            this.BeginNewTrainingBtn.UseVisualStyleBackColor = true;
+            this.BeginNewTrainingBtn.Click += new System.EventHandler(this.BeginNewTrainingBtn_Click);
             // 
             // ContinueTrainingBtn
             // 
@@ -688,18 +716,6 @@ namespace MP2
             this.AttributesListBox.TabIndex = 8;
             this.AttributesListBox.ThreeDCheckBoxes = true;
             // 
-            // BeginNewTrainingBtn
-            // 
-            this.BeginNewTrainingBtn.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BeginNewTrainingBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
-            this.BeginNewTrainingBtn.Location = new System.Drawing.Point(6, 9);
-            this.BeginNewTrainingBtn.Name = "BeginNewTrainingBtn";
-            this.BeginNewTrainingBtn.Size = new System.Drawing.Size(139, 45);
-            this.BeginNewTrainingBtn.TabIndex = 3;
-            this.BeginNewTrainingBtn.Text = "Begin new training";
-            this.BeginNewTrainingBtn.UseVisualStyleBackColor = true;
-            this.BeginNewTrainingBtn.Click += new System.EventHandler(this.BeginNewTrainingBtn_Click);
-            // 
             // TrainDataTextBox
             // 
             this.TrainDataTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -715,15 +731,22 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // TrainingButtonsPanel
+            // chart1
             // 
-            this.TrainingButtonsPanel.Controls.Add(this.BeginNewTrainingBtn);
-            this.TrainingButtonsPanel.Controls.Add(this.ContinueTrainingBtn);
-            this.TrainingButtonsPanel.Enabled = false;
-            this.TrainingButtonsPanel.Location = new System.Drawing.Point(416, 399);
-            this.TrainingButtonsPanel.Name = "TrainingButtonsPanel";
-            this.TrainingButtonsPanel.Size = new System.Drawing.Size(153, 118);
-            this.TrainingButtonsPanel.TabIndex = 39;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(434, 136);
+            this.chart1.Name = "chart1";
+            this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Berry;
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
+            this.chart1.Size = new System.Drawing.Size(300, 300);
+            this.chart1.TabIndex = 11;
+            this.chart1.Text = "chart1";
             // 
             // Form1
             // 
@@ -746,6 +769,7 @@ namespace MP2
             this.SettingsPanel.PerformLayout();
             this.MenuPanel.ResumeLayout(false);
             this.MenuPanel.PerformLayout();
+            this.TrainingButtonsPanel.ResumeLayout(false);
             this.TestResultPanel.ResumeLayout(false);
             this.TestResultPanel.PerformLayout();
             this.ConditionPanel.ResumeLayout(false);
@@ -754,7 +778,7 @@ namespace MP2
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).EndInit();
-            this.TrainingButtonsPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -811,6 +835,7 @@ namespace MP2
         private System.Windows.Forms.Panel TestResultPanel;
         private System.Windows.Forms.Button ContinueTrainingBtn;
         private System.Windows.Forms.Panel TrainingButtonsPanel;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
     }
 }
 

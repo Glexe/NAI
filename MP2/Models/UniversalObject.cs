@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MP2.Models
 {
@@ -42,11 +38,6 @@ namespace MP2.Models
                 }
             }
         }
-
-        /*public string GetSortedHeaders()
-        {
-            return string.Join(",", StringValues.Keys) + "," + string.Join(",", DoubleValues.Keys);
-        }*/
 
         public override string ToString()
         {

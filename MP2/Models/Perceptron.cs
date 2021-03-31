@@ -7,22 +7,6 @@ namespace MP2.Models
         public double[] Weights { get; set; }
         public float Threshold { get; set; }
 
-        public Perceptron(double[] weights,  float threshold)
-        {
-            Weights = weights;
-            Threshold = threshold;
-        }
-
-        public Perceptron(float threshold)
-        {
-            Threshold = threshold;
-        }
-
-        public Perceptron()
-        {
-
-        }
-
         public void ResizeWeights(int size, bool fillWithRandomValues = true)
         {
             if (size <= 0) throw new ArgumentException("Weights count cant be negative");
@@ -34,19 +18,13 @@ namespace MP2.Models
             }
         }
 
-        public int GetOutput(double[] input)
+        public int GetOutput(Vector vector)
         {
             double sum = 0;
-            try
+            var inputVector = vector.Normalized();
+            for (int i = 0; i < inputVector.Length; i++)
             {
-                for (int i = 0; i < input.Length; i++)
-                {
-                    sum += Weights[i] * input[i];
-                }
-            }
-            catch
-            {
-                return -1;
+                sum += Weights[i] * inputVector[i];
             }
 
             return sum > Threshold ? 1 : 0;

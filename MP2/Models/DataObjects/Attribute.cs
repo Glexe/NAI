@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MP2.Models
 {
@@ -11,12 +7,7 @@ namespace MP2.Models
         public string name;
         public dynamic value;
         public Type type;
-        private Attribute(string name, double value)
-        {
-            this.name = name;
-            this.value = value;
-            type = typeof(double);
-        }
+
 
         public Attribute(string name, string value)
         {

@@ -12,7 +12,6 @@ namespace MP2
 {
     public class MainController
     {
-
         public static string ReadData(string filePath, DataSet dataSet = DataSet.NONE)
         {
             var parser = new ParserCSV(filePath);
@@ -42,24 +41,14 @@ namespace MP2
             ReadData(filePath, dataSet);
         }
 
-        public static bool TestOnce(Perceptron perceptron, double[] input, double output)
-        {
-            return perceptron.GetOutput(input) == output;
-        }
-
-        public static int GetOutput(Perceptron perceptron, double[] input)
-        {
-            return perceptron.GetOutput(input);
-        }
-
-        public static void TrainSession(TrainData data)
+        public static void TrainSession(TrainingParameters data)
         {
             Trainer trainer = new Trainer();
             data.TransformData(out double[][] inputs, out double[] outputs);
             trainer.Train(inputs, outputs, data.LearningRate, data.Epoch, data.Perceptron);
         }
 
-        public static void TestSession(TrainData data, out int correctCount, out int incorrectCount, out float accuracy, out string summary)
+        public static void TestSession(TrainingParameters data, out int correctCount, out int incorrectCount, out float accuracy, out string summary)
         {
             data.TransformData(out double[][] inputs, out double[] outputs);
 
@@ -69,7 +58,7 @@ namespace MP2
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                var res = data.Perceptron.GetOutput(inputs[i]);
+                var res = data.Perceptron.GetOutput(new Vector(inputs[i]));
                 if (res == outputs[i]) correct++;
                 else incorrect++;
                 summaryTmp += $"GivenInput: [{string.Join(", ", inputs[i])}]\r\nWantedResult: {outputs[i]}\r\nActualResult: {res}\r\n\r\n";
@@ -81,7 +70,7 @@ namespace MP2
             summary = summaryTmp;
         }
 
-        public static Predicate<Attribute> CreateCondition(string @operator, string value)
+        public static Predicate<Attribute> CreatePredicate(string @operator, string value)
         {
             Predicate<Attribute> predicate;
             var asd = new Attribute("test", value);

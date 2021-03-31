@@ -28,7 +28,7 @@ namespace MP2
             Settings
         }
 
-        struct TrainSpecs
+        struct TrainingSpecifications
         {
             public string[] inputAttributes;
             public string outputAttribute;
@@ -114,6 +114,7 @@ namespace MP2
             ConditionPanel.Visible = status;
             TrainingButtonsPanel.Enabled = ValidateInput();
         }
+
         #endregion
 
         #region TextChanged
@@ -189,6 +190,7 @@ namespace MP2
             EpochCountBox.Text = (((TrackBar)sender).Value * 5).ToString();
         }
         #endregion
+
         #endregion
 
         #region Button Clicks
@@ -208,12 +210,12 @@ namespace MP2
 
         private void BeginNewTrainingBtn_Click(object sender, EventArgs e)
         {
-            PushSession(useNewPerceptron:true);
+            StartTraining(useNewPerceptron:true);
         }
 
         private void ContinueTrainingBtn_Click(object sender, EventArgs e)
         {
-            PushSession(useNewPerceptron: false);
+            StartTraining(useNewPerceptron: false);
         }
 
         private void ExitBtn_Click(object sender, EventArgs e)
@@ -242,15 +244,96 @@ namespace MP2
         private string PickFile()
         {
             var dialog = new CommonOpenFileDialog();
-            var filter = new CommonFileDialogFilter("CSV", "*.csv");
-            dialog.Filters.Add(filter);
+            var filterCSV = new CommonFileDialogFilter("CSV", "*.csv");
+            var filterTXT = new CommonFileDialogFilter("TXT", "*.txt");
+            dialog.Filters.Add(filterCSV);
+            dialog.Filters.Add(filterTXT);
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 return dialog.FileName;
             }
             return null;
         }
+
         #endregion
+
+        #region Load Boxes
+
+        private void LoadInputAttributes(params string[] @params)
+        {
+            AttributesListBox.Items.Clear();
+            foreach (var field in @params)
+            {
+                AttributesListBox.Items.Add(field, false);
+            }
+        }
+        private void LoadOutputAttribute(params string[] @params)
+        {
+            OutputAttributeComboBox.Items.Clear();
+            foreach(var item in @params)
+            {
+                OutputAttributeComboBox.Items.Add(item);
+            }
+        }
+        private void LoadOperators(InputManager.DataType dataType)
+        {
+            ConditionTextBox.Text = "";
+            OperatorChooserComboBox.Items.Clear();
+            OperatorChooserComboBox.Items.Add("==");
+            OperatorChooserComboBox.Items.Add("!=");
+
+            if(dataType == InputManager.DataType.DOUBLE)
+            {
+                OperatorChooserComboBox.Items.Add(">");
+                OperatorChooserComboBox.Items.Add("<");
+            }
+        }
+
+        #endregion
+
+        #region Validation
+
+        private bool ValidateInput()
+        {
+            if (OperatorChooserComboBox.SelectedItem is null) return false;
+            if (OutputAttributeComboBox.SelectedItem is null) return false;
+            if (ConditionTextBox.Text == string.Empty) return false;
+            if (TrainDataTextBox.Text == string.Empty) return false;
+            if (TestDataTextBox.Text == string.Empty) return false;
+            if (_checkedInputAttributes.Count == 0) return false;
+            if (InvalidConditionLabel.Visible == true) return false;
+            return true;
+        }
+
+        private void ValidateCondition()
+        {
+            var doubleRegex = @"^\d*\.{0,1}\d+$";
+            var stringRegex = @"^.+$";
+            Regex regex = new Regex(doubleRegex);
+
+            if (GetAttributeDataType(OutputAttributeComboBox.SelectedItem.ToString()) == DataType.STRING)
+            {
+                if (regex.IsMatch(ConditionTextBox.Text))
+                {
+                    InvalidConditionLabel.Visible = true;
+                    return;
+                }
+                else regex = new Regex(stringRegex);
+            }
+            
+            if(!regex.IsMatch(ConditionTextBox.Text) || OperatorChooserComboBox.SelectedItem is null)
+            {
+                InvalidConditionLabel.Visible = true;
+            }
+            else
+            {
+                InvalidConditionLabel.Visible = false;
+            }
+        }
+
+        #endregion
+
+        #region Utility
 
         private void InitializeDefaultValues()
         {
@@ -265,24 +348,41 @@ namespace MP2
             _trainSetPath = TrainSetPathText.Text;
             _testSetPath = TestSetPathText.Text;
         }
-
-        private void LoadInputAttributes(params string[] @params)
+        private void SetData(TextBox textBox, string filePath)
         {
-            AttributesListBox.Items.Clear();
-            foreach (var field in @params)
-            {
-                AttributesListBox.Items.Add(field, false);
-            }
+            textBox.Text = MainController.ReadData(filePath);
+        }
+        private void SetTrainingResults(int correctCount, int incorrectCount, float accuracy, string summary)
+        {
+            correctCountLabel.Text = $"Correct: {correctCount}";
+            IncorrectCountLabel.Text = $"Incorrect: {incorrectCount}";
+            AccuracyLabel.Text = $"Accuracy: {accuracy}%";
+            ChangeAccuracyColor(accuracy);
+            ResultTextBox.Text = summary;
+            ContinueTrainingBtn.Visible = true;
+        }
+        private void ChangeAccuracyColor(float? value)
+        {
+            Color labelColor = Color.Black;
+            if (value is null) labelColor = Color.Black;
+            else if (value < 35) labelColor = Color.Red;
+            else if (value >= 35 && value < 65) labelColor = Color.Yellow;
+            else if (value >= 65) labelColor = Color.Green;
+
+            AccuracyLabel.ForeColor = labelColor;
+        }
+        private void DefaultPage()
+        {
+            correctCountLabel.Text = "Correct: ";
+            IncorrectCountLabel.Text = "Incorrect: ";
+            AccuracyLabel.Text = "Accuracy: ";
+            ChangeAccuracyColor(null);
+            ContinueTrainingBtn.Visible = false;
+            ConditionPanel.Visible = false;
+            ResultTextBox.Text = "";
         }
 
-        private void LoadOutputAttribute(params string[] @params)
-        {
-            OutputAttributeComboBox.Items.Clear();
-            foreach(var item in @params)
-            {
-                OutputAttributeComboBox.Items.Add(item);
-            }
-        }
+        #endregion
 
         private void SwitchPage(AppStates state)
         {
@@ -308,59 +408,18 @@ namespace MP2
                     break;
             }
         }
-
-        private void LoadOperators(InputManager.DataType dataType)
+        private DataType GetAttributeDataType(string attribute)
         {
-            ConditionTextBox.Text = "";
-            OperatorChooserComboBox.Items.Clear();
-            OperatorChooserComboBox.Items.Add("==");
-            OperatorChooserComboBox.Items.Add("!=");
-
-            if(dataType == InputManager.DataType.DOUBLE)
+            if(_headers_double is null || _headers_string is null)
             {
-                OperatorChooserComboBox.Items.Add(">");
-                OperatorChooserComboBox.Items.Add("<");
+                _headers_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.DOUBLE);
+                _headers_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.STRING);
             }
+
+            if (_headers_double.Contains(attribute)) return DataType.DOUBLE;
+            else if (_headers_string.Contains(attribute)) return DataType.STRING;
+            throw new ArgumentException("Invalid attribute");
         }
-
-        private bool ValidateInput()
-        {
-            if (OperatorChooserComboBox.SelectedItem is null) return false;
-            if (OutputAttributeComboBox.SelectedItem is null) return false;
-            if (ConditionTextBox.Text == string.Empty) return false;
-            if (TrainDataTextBox.Text == string.Empty) return false;
-            if (TestDataTextBox.Text == string.Empty) return false;
-            if (_checkedInputAttributes.Count == 0) return false;
-            if (InvalidConditionLabel.Visible == true) return false;
-            return true;
-        }
-
-        private void ValidateCondition()
-        {
-            var doubleRegex = @"^\d*\.{0,1}\d+$";
-            var stringRegex = @"^.+$";
-            Regex regex;
-            switch (GetAttributeDataType(OutputAttributeComboBox.SelectedItem.ToString()))
-            {
-                case DataType.DOUBLE:
-                    regex = new Regex(doubleRegex);
-                    break;
-                case DataType.STRING:
-                    regex = new Regex(stringRegex);
-                    break;
-                default: throw new ArgumentException("Checked attribute doesnt exist");
-            }
-            
-            if(!regex.IsMatch(ConditionTextBox.Text) || OperatorChooserComboBox.SelectedItem is null)
-            {
-                InvalidConditionLabel.Visible = true;
-            }
-            else
-            {
-                InvalidConditionLabel.Visible = false;
-            }
-        }
-
         private void LoadMenuPage()
         {
             TrainingButtonsPanel.Enabled = false;
@@ -386,35 +445,9 @@ namespace MP2
 
                 LoadOutputAttribute(trainHeaders_string.Concat(trainHeaders_double).ToArray());
         }
-
-        private DataType GetAttributeDataType(string attribute)
+        private void ReadTrainingSpecs(out TrainingSpecifications trainSpecs)
         {
-            if(_headers_double is null || _headers_string is null)
-            {
-                _headers_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.DOUBLE);
-                _headers_string = InputManager.GetHeaders(InputManager.DataSet.TRAIN, DataType.STRING);
-            }
-
-            if (_headers_double.Contains(attribute)) return DataType.DOUBLE;
-            else if (_headers_string.Contains(attribute)) return DataType.STRING;
-            throw new ArgumentException("Invalid attribute");
-        }
-
-        private void RefreshDatabase()
-        {
-            if (_outputSetPath != null) MainController.LoadDataToDatabase(_outputSetPath, InputManager.DataSet.OUTPUT);
-            if (_testSetPath != null) MainController.LoadDataToDatabase(_testSetPath, InputManager.DataSet.TEST);
-            if (_trainSetPath != null) MainController.LoadDataToDatabase(_trainSetPath, InputManager.DataSet.TRAIN);
-        }
-
-        private void SetData(TextBox textBox, string filePath)
-        {
-            textBox.Text = MainController.ReadData(filePath);
-        }
-
-        private void ReadTrainSpecs(out TrainSpecs trainSpecs)
-        {
-            trainSpecs = new TrainSpecs
+            trainSpecs = new TrainingSpecifications
             {
                 inputAttributes = _checkedInputAttributes.ToArray(),
                 outputAttribute = OutputAttributeComboBox.Text,
@@ -424,66 +457,49 @@ namespace MP2
                 maxError = float.Parse(MaxErrorBox.Text)
             };
         }
-
-        private void ChangeAccuracyColor(float? value)
+        private TrainingParameters GetTrainingParameters(TrainingSpecifications specs, Perceptron perceptron)
         {
-            Color labelColor = Color.Black;
-            if (value is null) labelColor = Color.Black;
-            else if (value < 35) labelColor = Color.Red;
-            else if (value >= 35 && value < 65) labelColor = Color.Yellow;
-            else if (value >= 65) labelColor = Color.Green;
-
-            AccuracyLabel.ForeColor = labelColor;
-        }
-
-        private void DefaultPage()
-        {
-            correctCountLabel.Text = "Correct: ";
-            IncorrectCountLabel.Text = "Incorrect: ";
-            AccuracyLabel.Text = "Accuracy: ";
-            ChangeAccuracyColor(null);
-            ContinueTrainingBtn.Visible = false;
-            ConditionPanel.Visible = false;
-            ResultTextBox.Text = "";
-        }
-
-        private void PushSession(bool useNewPerceptron = true)
-        {
-            ReadTrainSpecs(out TrainSpecs specs);
-            if(useNewPerceptron || _perceptron is null)
-            {
-                _perceptron = new Perceptron();
-            }
-            _perceptron.Threshold = specs.threshold;
-
-
-            var pred = MainController.CreateCondition(OperatorChooserComboBox.SelectedItem.ToString(), ConditionTextBox.Text);
+            var predicate = MainController.CreatePredicate(OperatorChooserComboBox.SelectedItem.ToString(), ConditionTextBox.Text);
             var dataType = GetAttributeDataType(specs.outputAttribute);
-            
-            TrainData trainData = new TrainData
+
+            return new TrainingParameters
             {
                 OutputAttribute = specs.outputAttribute,
                 InputAttributes = specs.inputAttributes,
                 LearningRate = specs.learningRate,
                 Epoch = specs.epoch,
-                @Perceptron = _perceptron,
-                @Predicate = pred,
+                @Perceptron = perceptron,
+                @Predicate = predicate,
                 @DataSet = InputManager.DataSet.TRAIN,
                 OutputDataType = dataType
             };
+        }
+        private void RefreshDatabase()
+        {
+            if (_outputSetPath != null) MainController.LoadDataToDatabase(_outputSetPath, InputManager.DataSet.OUTPUT);
+            if (_testSetPath != null) MainController.LoadDataToDatabase(_testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.LoadDataToDatabase(_trainSetPath, InputManager.DataSet.TRAIN);
+        }
+
+
+        private void StartTraining(bool useNewPerceptron = true)
+        {
+            ReadTrainingSpecs(out TrainingSpecifications specs);
+            if (useNewPerceptron || _perceptron is null)
+            {
+                _perceptron = new Perceptron();
+            }
+            _perceptron.Threshold = specs.threshold;
+
+            var trainParams = GetTrainingParameters(specs, _perceptron);
 
             
-            MainController.TrainSession(trainData);
-            trainData.DataSet = InputManager.DataSet.TEST;
+            MainController.TrainSession(trainParams);
+            trainParams.DataSet = InputManager.DataSet.TEST;
 
-            MainController.TestSession(trainData, out int correctCount, out int incorrectCount, out float accuracy, out string summary);
+            MainController.TestSession(trainParams, out int correctCount, out int incorrectCount, out float accuracy, out string summary);
 
-            correctCountLabel.Text = $"Correct: {correctCount}";
-            IncorrectCountLabel.Text = $"Incorrect: {incorrectCount}";
-            AccuracyLabel.Text = $"Accuracy: {accuracy}%";
-            ChangeAccuracyColor(accuracy);
-            ResultTextBox.Text = summary;
-            ContinueTrainingBtn.Visible = true;
-        }  
+            SetTrainingResults(correctCount, incorrectCount, accuracy, summary);
+        }
     }
 }
