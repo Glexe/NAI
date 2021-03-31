@@ -9,6 +9,7 @@ namespace MP2.Models
     public class Trainer
     {
         private double[][] _inputs;
+        private List<double[]> _inputVectors;
         private double[] _wantedOutputs;
 
         private Perceptron _perceptron;
@@ -34,17 +35,28 @@ namespace MP2.Models
             }
         }
 
+        private void PrepareInputData()
+        {
+            _inputVectors = new List<double[]>();
+            if (_inputs is null) return;
+            foreach (var item in _inputs)
+            {
+                _inputVectors.Add(new Vector(item).Normalized());
+            }
+        }
+
         private void RunOnce()
         {
+            PrepareInputData();
             for(int i=0; i<_wantedOutputs.Length; i++)
             {
-                int actualOutput = _perceptron.GetOutput(new Vector(_inputs[i]));
+                int actualOutput = _perceptron.GetOutput(_inputVectors[i]);
                 double error = (_wantedOutputs[i] - actualOutput);
                 _totalError += error;
 
                 for(int x=0; x<_tempWeights.Length; x++)
                 {
-                    double delta = _learningRate * _inputs[i][x] * error;
+                    double delta = _learningRate * _inputVectors[i][x] * error;
                     _tempWeights[x] += delta;
                 }
             }

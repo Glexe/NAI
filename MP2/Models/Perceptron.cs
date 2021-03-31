@@ -18,13 +18,12 @@ namespace MP2.Models
             }
         }
 
-        public int GetOutput(Vector vector)
+        public int GetOutput(double[] input)
         {
             double sum = 0;
-            var inputVector = vector.Normalized();
-            for (int i = 0; i < inputVector.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                sum += Weights[i] * inputVector[i];
+                sum += Weights[i] * input[i];
             }
 
             return sum > Threshold ? 1 : 0;

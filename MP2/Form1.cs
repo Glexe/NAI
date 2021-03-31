@@ -426,7 +426,7 @@ namespace MP2
             if (_trainSetPath is null || _testSetPath is null) throw new NullReferenceException("Provide valid file pathes");
 
                 DefaultPage();
-                RefreshDatabase();
+                LoadDatabaseFromFile();
 
                 var trainHeaders_double = InputManager.GetHeaders(InputManager.DataSet.TRAIN, InputManager.DataType.DOUBLE);
                 var testHeaders = InputManager.GetHeaders(InputManager.DataSet.TEST, InputManager.DataType.DOUBLE);
@@ -474,16 +474,23 @@ namespace MP2
                 OutputDataType = dataType
             };
         }
-        private void RefreshDatabase()
+        private void LoadDatabaseFromFile()
         {
-            if (_outputSetPath != null) MainController.LoadDataToDatabase(_outputSetPath, InputManager.DataSet.OUTPUT);
-            if (_testSetPath != null) MainController.LoadDataToDatabase(_testSetPath, InputManager.DataSet.TEST);
-            if (_trainSetPath != null) MainController.LoadDataToDatabase(_trainSetPath, InputManager.DataSet.TRAIN);
+            if (_outputSetPath != null) MainController.ReadDataFromFile(_outputSetPath, InputManager.DataSet.OUTPUT);
+            if (_testSetPath != null) MainController.ReadDataFromFile(_testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.ReadDataFromFile(_trainSetPath, InputManager.DataSet.TRAIN);
+        }
+
+        private void LoadDatabaseFromTextBox()
+        {
+            if (_testSetPath != null) MainController.ReadDataFromTextBox(TestDataTextBox.Text, _testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.ReadDataFromTextBox(TrainDataTextBox.Text, _trainSetPath, InputManager.DataSet.TRAIN);
         }
 
 
         private void StartTraining(bool useNewPerceptron = true)
         {
+            LoadDatabaseFromTextBox();
             ReadTrainingSpecs(out TrainingSpecifications specs);
             if (useNewPerceptron || _perceptron is null)
             {

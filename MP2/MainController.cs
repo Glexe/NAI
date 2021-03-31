@@ -12,6 +12,18 @@ namespace MP2
 {
     public class MainController
     {
+        private static void ParseData(string data, string[] headers, DataSet dataSet = DataSet.NONE)
+        {
+            var lines = data.Split(new string[] { "\r\n" },StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var item in lines)
+            {
+                var line = item.Split(new string[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
+                if (line.Length != headers.Length) throw new ArgumentException("Invalid data");
+                InputManager.CreateInstance(line, headers, dataSet);
+            }
+        }
+
         public static string ReadData(string filePath, DataSet dataSet = DataSet.NONE)
         {
             var parser = new ParserCSV(filePath);
@@ -21,7 +33,7 @@ namespace MP2
             string[] line;
             while ((line = parser.ParseLine()) != null)
             {
-                if (line.Length != headers.Length) throw new ArgumentException($"Invalid data in: {filePath}");
+                if (line.Length != headers.Length) throw new ArgumentException("Invalid data");
                 objectsList.Add(InputManager.CreateInstance(line, headers, dataSet));
             }
             parser.Dispose();
@@ -35,10 +47,18 @@ namespace MP2
             return data;
         }
 
-        public static void LoadDataToDatabase(string filePath, DataSet dataSet)
+        public static void ReadDataFromFile(string filePath, DataSet dataSet)
         {
             InputManager.dataSets.Remove(dataSet);
             ReadData(filePath, dataSet);
+        }
+
+        public static void ReadDataFromTextBox(string data, string filePath, DataSet dataSet)
+        {
+            InputManager.dataSets.Remove(dataSet);
+            var parser = new ParserCSV(filePath);
+            var headers = parser.ParseHeaders();
+            ParseData(data, headers, dataSet);
         }
 
         public static void TrainSession(TrainingParameters data)
@@ -58,7 +78,7 @@ namespace MP2
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                var res = data.Perceptron.GetOutput(new Vector(inputs[i]));
+                var res = data.Perceptron.GetOutput(inputs[0]);
                 if (res == outputs[i]) correct++;
                 else incorrect++;
                 summaryTmp += $"GivenInput: [{string.Join(", ", inputs[i])}]\r\nWantedResult: {outputs[i]}\r\nActualResult: {res}\r\n\r\n";

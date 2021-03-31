@@ -41,7 +41,21 @@ namespace MP2.Models
 
         public override string ToString()
         {
-            return string.Join(" | ", StringValues.Values)+ " | " + string.Join(" | ", DoubleValues.Values);
+            string returnString = "";
+           
+            for(int i=0; i<_headers.Length; i++)
+            {
+                DoubleValues.TryGetValue(_headers[i], out double valueDouble);
+                StringValues.TryGetValue(_headers[i], out string valueString);
+
+                if (valueDouble != default) returnString += valueDouble;
+                else if (valueString != default) returnString += valueString;
+
+                if (i != _headers.Length - 1) returnString += " | ";
+            }
+
+            return returnString;
+            //return string.Join(" | ", StringValues.Values)+ " | " + string.Join(" | ", DoubleValues.Values);
         }
     }
 }
