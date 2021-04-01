@@ -30,16 +30,21 @@ namespace MP2
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ChartsBtn = new System.Windows.Forms.Button();
             this.ExitBtn = new System.Windows.Forms.Button();
             this.SettingsBtn = new System.Windows.Forms.Button();
             this.MenuBtn = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.LogoImageBox = new System.Windows.Forms.PictureBox();
             this.SettingsPanel = new System.Windows.Forms.Panel();
+            this.ChartsPanel = new System.Windows.Forms.Panel();
+            this.DrawChartsBtn = new System.Windows.Forms.Button();
+            this.MainChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label11 = new System.Windows.Forms.Label();
             this.SelectOutputSetPath = new System.Windows.Forms.Button();
             this.OutputSetPathText = new System.Windows.Forms.TextBox();
@@ -83,11 +88,13 @@ namespace MP2
             this.AttributesListBox = new System.Windows.Forms.CheckedListBox();
             this.TrainDataTextBox = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.LoadDataBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).BeginInit();
             this.SettingsPanel.SuspendLayout();
+            this.ChartsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MainChart)).BeginInit();
             this.MenuPanel.SuspendLayout();
             this.TrainingButtonsPanel.SuspendLayout();
             this.TestResultPanel.SuspendLayout();
@@ -96,12 +103,12 @@ namespace MP2
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(140)))), ((int)(((byte)(115)))));
+            this.panel1.Controls.Add(this.ChartsBtn);
             this.panel1.Controls.Add(this.ExitBtn);
             this.panel1.Controls.Add(this.SettingsBtn);
             this.panel1.Controls.Add(this.MenuBtn);
@@ -111,6 +118,27 @@ namespace MP2
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(141, 554);
             this.panel1.TabIndex = 0;
+            // 
+            // ChartsBtn
+            // 
+            this.ChartsBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(140)))), ((int)(((byte)(115)))));
+            this.ChartsBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ChartsBtn.Dock = System.Windows.Forms.DockStyle.Top;
+            this.ChartsBtn.FlatAppearance.BorderSize = 0;
+            this.ChartsBtn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(75)))), ((int)(((byte)(55)))));
+            this.ChartsBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(75)))), ((int)(((byte)(55)))));
+            this.ChartsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChartsBtn.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChartsBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.ChartsBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ChartsBtn.Location = new System.Drawing.Point(0, 240);
+            this.ChartsBtn.Name = "ChartsBtn";
+            this.ChartsBtn.Size = new System.Drawing.Size(141, 48);
+            this.ChartsBtn.TabIndex = 5;
+            this.ChartsBtn.Text = "Charts";
+            this.ChartsBtn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.ChartsBtn.UseVisualStyleBackColor = false;
+            this.ChartsBtn.Click += new System.EventHandler(this.ChartsBtn_Click);
             // 
             // ExitBtn
             // 
@@ -202,7 +230,6 @@ namespace MP2
             // SettingsPanel
             // 
             this.SettingsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
-            this.SettingsPanel.Controls.Add(this.chart1);
             this.SettingsPanel.Controls.Add(this.label11);
             this.SettingsPanel.Controls.Add(this.SelectOutputSetPath);
             this.SettingsPanel.Controls.Add(this.OutputSetPathText);
@@ -212,11 +239,71 @@ namespace MP2
             this.SettingsPanel.Controls.Add(this.label1);
             this.SettingsPanel.Controls.Add(this.SelectTrainSetPath);
             this.SettingsPanel.Controls.Add(this.TrainSetPathText);
-            this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SettingsPanel.Location = new System.Drawing.Point(141, 0);
             this.SettingsPanel.Name = "SettingsPanel";
             this.SettingsPanel.Size = new System.Drawing.Size(763, 554);
             this.SettingsPanel.TabIndex = 1;
+            // 
+            // ChartsPanel
+            // 
+            this.ChartsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.ChartsPanel.Controls.Add(this.DrawChartsBtn);
+            this.ChartsPanel.Controls.Add(this.MainChart);
+            this.ChartsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChartsPanel.Location = new System.Drawing.Point(141, 0);
+            this.ChartsPanel.Name = "ChartsPanel";
+            this.ChartsPanel.Size = new System.Drawing.Size(763, 554);
+            this.ChartsPanel.TabIndex = 12;
+            // 
+            // DrawChartsBtn
+            // 
+            this.DrawChartsBtn.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DrawChartsBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.DrawChartsBtn.Location = new System.Drawing.Point(18, 410);
+            this.DrawChartsBtn.Name = "DrawChartsBtn";
+            this.DrawChartsBtn.Size = new System.Drawing.Size(139, 45);
+            this.DrawChartsBtn.TabIndex = 12;
+            this.DrawChartsBtn.Text = "Draw";
+            this.DrawChartsBtn.UseVisualStyleBackColor = true;
+            this.DrawChartsBtn.Click += new System.EventHandler(this.DrawChartsBtn_Click);
+            // 
+            // MainChart
+            // 
+            chartArea6.AxisX.Interval = 0.1D;
+            chartArea6.AxisX.Maximum = 1D;
+            chartArea6.AxisX.Minimum = 0D;
+            chartArea6.AxisX2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea6.AxisX2.Maximum = 10D;
+            chartArea6.AxisX2.Minimum = 0D;
+            chartArea6.AxisY.Interval = 10D;
+            chartArea6.AxisY.Maximum = 100D;
+            chartArea6.AxisY.Minimum = 0D;
+            chartArea6.AxisY2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea6.Name = "ChartArea1";
+            this.MainChart.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.MainChart.Legends.Add(legend6);
+            this.MainChart.Location = new System.Drawing.Point(18, 37);
+            this.MainChart.Name = "MainChart";
+            this.MainChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Berry;
+            series11.BorderWidth = 3;
+            series11.ChartArea = "ChartArea1";
+            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series11.Legend = "Legend1";
+            series11.Name = "Learning Rate";
+            series11.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series12.BorderWidth = 3;
+            series12.ChartArea = "ChartArea1";
+            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series12.Color = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            series12.Legend = "Legend1";
+            series12.Name = "Threshold";
+            this.MainChart.Series.Add(series11);
+            this.MainChart.Series.Add(series12);
+            this.MainChart.Size = new System.Drawing.Size(736, 346);
+            this.MainChart.TabIndex = 11;
+            this.MainChart.Text = "chart2";
             // 
             // label11
             // 
@@ -322,6 +409,7 @@ namespace MP2
             // MenuPanel
             // 
             this.MenuPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(240)))), ((int)(((byte)(220)))));
+            this.MenuPanel.Controls.Add(this.LoadDataBtn);
             this.MenuPanel.Controls.Add(this.TrainingButtonsPanel);
             this.MenuPanel.Controls.Add(this.TestResultPanel);
             this.MenuPanel.Controls.Add(this.ConditionPanel);
@@ -731,22 +819,17 @@ namespace MP2
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // chart1
+            // LoadDataBtn
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
-            this.chart1.Location = new System.Drawing.Point(434, 136);
-            this.chart1.Name = "chart1";
-            this.chart1.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Berry;
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart1.Series.Add(series3);
-            this.chart1.Size = new System.Drawing.Size(300, 300);
-            this.chart1.TabIndex = 11;
-            this.chart1.Text = "chart1";
+            this.LoadDataBtn.Font = new System.Drawing.Font("Nirmala UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LoadDataBtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(45)))));
+            this.LoadDataBtn.Location = new System.Drawing.Point(18, 229);
+            this.LoadDataBtn.Name = "LoadDataBtn";
+            this.LoadDataBtn.Size = new System.Drawing.Size(139, 45);
+            this.LoadDataBtn.TabIndex = 39;
+            this.LoadDataBtn.Text = "Load data";
+            this.LoadDataBtn.UseVisualStyleBackColor = true;
+            this.LoadDataBtn.Click += new System.EventHandler(this.LoadDataBtn_Click);
             // 
             // Form1
             // 
@@ -754,8 +837,9 @@ namespace MP2
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(243)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(904, 554);
-            this.Controls.Add(this.SettingsPanel);
+            this.Controls.Add(this.ChartsPanel);
             this.Controls.Add(this.MenuPanel);
+            this.Controls.Add(this.SettingsPanel);
             this.Controls.Add(this.panel1);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -767,6 +851,8 @@ namespace MP2
             ((System.ComponentModel.ISupportInitialize)(this.LogoImageBox)).EndInit();
             this.SettingsPanel.ResumeLayout(false);
             this.SettingsPanel.PerformLayout();
+            this.ChartsPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.MainChart)).EndInit();
             this.MenuPanel.ResumeLayout(false);
             this.MenuPanel.PerformLayout();
             this.TrainingButtonsPanel.ResumeLayout(false);
@@ -778,7 +864,6 @@ namespace MP2
             ((System.ComponentModel.ISupportInitialize)(this.ThresholdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LearningRateTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EpochTrackBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -835,7 +920,11 @@ namespace MP2
         private System.Windows.Forms.Panel TestResultPanel;
         private System.Windows.Forms.Button ContinueTrainingBtn;
         private System.Windows.Forms.Panel TrainingButtonsPanel;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Button ChartsBtn;
+        private System.Windows.Forms.Panel ChartsPanel;
+        private System.Windows.Forms.Button DrawChartsBtn;
+        private System.Windows.Forms.DataVisualization.Charting.Chart MainChart;
+        private System.Windows.Forms.Button LoadDataBtn;
     }
 }
 

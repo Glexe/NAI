@@ -78,7 +78,7 @@ namespace MP2
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                var res = data.Perceptron.GetOutput(inputs[0]);
+                var res = data.Perceptron.GetOutput(inputs[i]);
                 if (res == outputs[i]) correct++;
                 else incorrect++;
                 summaryTmp += $"GivenInput: [{string.Join(", ", inputs[i])}]\r\nWantedResult: {outputs[i]}\r\nActualResult: {res}\r\n\r\n";

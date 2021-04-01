@@ -119,5 +119,17 @@
   <ItemGroup>
     <None Include="Resources\Exit.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LoadingGif.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ajax-loader.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Image1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Image2.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

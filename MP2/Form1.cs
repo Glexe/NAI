@@ -10,13 +10,16 @@ using MP2.Models;
 using System.Text.RegularExpressions;
 using Attribute = MP2.Models.Attribute;
 using static MP2.Models.InputManager;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace MP2
 {
     public partial class Form1 : Form
     {
-        private const string TRAIN_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\irisTrain.csv";
-        private const string TEST_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\irisTest.csv";
+        private const string TRAIN_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\STROKE_TRAIN2.csv";
+        private const string TEST_SET_DEFAULT_PATH = @"D:\Soft\VisualStudio\Projects\NAI\MP2\Data\STROKE_TEST2.csv";
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
@@ -25,7 +28,8 @@ namespace MP2
         {
             None,
             Menu,
-            Settings
+            Settings,
+            Charts
         }
 
         struct TrainingSpecifications
@@ -81,7 +85,8 @@ namespace MP2
 
             #endregion
 
-            InitializeDefaultValues();  
+            InitializeDefaultValues();
+            
         }
 
 
@@ -196,16 +201,35 @@ namespace MP2
         #region Button Clicks
         private void MenuBtn_Click(object sender, EventArgs e)
         {
-            if(TrainSetPathText!=null && TestSetPathText != null)
+            SwitchPage(AppStates.Menu);
+        }
+
+        private void LoadDataBtn_Click(object sender, EventArgs e)
+        {
+            if (TrainSetPathText != null && TestSetPathText != null)
             {
+                LoadDataBtn.Text = "Load data";
                 LoadMenuPage();
             }
-            SwitchPage(AppStates.Menu);
+            else
+            {
+                LoadDataBtn.Text = "Pls insert pathes do files in settings";
+            }
         }
 
         private void SettingsBtn_Click(object sender, EventArgs e)
         {
             SwitchPage(AppStates.Settings);
+        }
+
+        private void ChartsBtn_Click(object sender, EventArgs e)
+        {
+            SwitchPage(AppStates.Charts);
+        }
+
+        private void DrawChartsBtn_Click(object sender, EventArgs e)
+        {
+            DrawCharts();
         }
 
         private void BeginNewTrainingBtn_Click(object sender, EventArgs e)
@@ -391,19 +415,33 @@ namespace MP2
                 case AppStates.None:
                     MenuBtn.BackColor = _bttnDefaultColor;
                     SettingsBtn.BackColor = _bttnDefaultColor;
+                    ChartsBtn.BackColor = _bttnDefaultColor;
+                    ChartsPanel.Visible = false;
                     SettingsPanel.Visible = false;
                     MenuPanel.Visible = false;
                     break;
                 case AppStates.Menu:
                     MenuBtn.BackColor = _bttnPressedColor;
                     SettingsBtn.BackColor = _bttnDefaultColor;
+                    ChartsBtn.BackColor = _bttnDefaultColor;
                     MenuPanel.Visible = true;
+                    ChartsPanel.Visible = false;
                     SettingsPanel.Visible = false;
                     break;
                 case AppStates.Settings:
                     MenuBtn.BackColor = _bttnDefaultColor;
                     SettingsBtn.BackColor = _bttnPressedColor;
+                    ChartsBtn.BackColor = _bttnDefaultColor;
                     SettingsPanel.Visible = true;
+                    ChartsPanel.Visible = false;
+                    MenuPanel.Visible = false;
+                    break;
+                case AppStates.Charts:
+                    MenuBtn.BackColor = _bttnDefaultColor;
+                    SettingsBtn.BackColor = _bttnDefaultColor;
+                    ChartsBtn.BackColor = _bttnPressedColor;
+                    ChartsPanel.Visible = true;
+                    SettingsPanel.Visible = false;
                     MenuPanel.Visible = false;
                     break;
             }
@@ -507,6 +545,46 @@ namespace MP2
             MainController.TestSession(trainParams, out int correctCount, out int incorrectCount, out float accuracy, out string summary);
 
             SetTrainingResults(correctCount, incorrectCount, accuracy, summary);
+            ResultTextBox.Text = string.Join((", "), _perceptron.Weights);
+
+            
         }
+
+
+        #region Charts
+        private void DrawCharts()
+        {
+            MainChart.Series["Learning Rate"].Points.Clear();
+            MainChart.Series["Threshold"].Points.Clear();
+            ReadTrainingSpecs(out TrainingSpecifications specs);
+            var specs1 = specs;
+            var specs2 = specs;
+
+            for(float i=0f; i<1.1f; i += 0.1f)
+            {
+                specs1.learningRate = i;
+
+                var trainParams = GetTrainingParameters(specs, _perceptron);
+                MainController.TrainSession(trainParams);
+                trainParams.DataSet = InputManager.DataSet.TEST;
+                MainController.TestSession(trainParams, out _, out _, out float accuracy, out _);
+                MainChart.Series["Learning Rate"].Points.AddXY(i, accuracy);
+            
+            }
+            for(float i=0f; i<1.1f; i += 0.1f)
+            {
+                specs2.threshold = i;
+
+                var trainParams = GetTrainingParameters(specs, _perceptron);
+                MainController.TrainSession(trainParams);
+                trainParams.DataSet = InputManager.DataSet.TEST;
+                MainController.TestSession(trainParams, out _, out _, out float accuracy, out _);
+                MainChart.Series["Threshold"].Points.AddXY(i, accuracy);
+            
+            }
+            
+            
+        }
+        #endregion
     }
 }

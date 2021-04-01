@@ -29,7 +29,7 @@ namespace MP2.Models
                 try
                 {
                     var value = Convert.ChangeType(item, typeof(double));
-                    if (value == null) throw new Exception("Empty value");
+                    //if (value == null) throw new Exception("Empty value");
                     DoubleValues.Add(_headers[i], (double)value);
                 }
                 catch
@@ -45,11 +45,16 @@ namespace MP2.Models
            
             for(int i=0; i<_headers.Length; i++)
             {
-                DoubleValues.TryGetValue(_headers[i], out double valueDouble);
-                StringValues.TryGetValue(_headers[i], out string valueString);
-
-                if (valueDouble != default) returnString += valueDouble;
-                else if (valueString != default) returnString += valueString;
+                if (DoubleValues.ContainsKey(_headers[i]))
+                {
+                    DoubleValues.TryGetValue(_headers[i], out double valueDouble);
+                    returnString += valueDouble;
+                }
+                else if (StringValues.ContainsKey(_headers[i]))
+                {
+                    StringValues.TryGetValue(_headers[i], out string valueString);
+                    returnString += valueString;
+                }
 
                 if (i != _headers.Length - 1) returnString += " | ";
             }
