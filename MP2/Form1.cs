@@ -514,15 +514,15 @@ namespace MP2
         }
         private void LoadDatabaseFromFile()
         {
-            if (_outputSetPath != null) MainController.ReadDataFromFile(_outputSetPath, InputManager.DataSet.OUTPUT);
-            if (_testSetPath != null) MainController.ReadDataFromFile(_testSetPath, InputManager.DataSet.TEST);
-            if (_trainSetPath != null) MainController.ReadDataFromFile(_trainSetPath, InputManager.DataSet.TRAIN);
+            if (_outputSetPath != null) MainController.LoadDataFromFile(_outputSetPath, InputManager.DataSet.OUTPUT);
+            if (_testSetPath != null) MainController.LoadDataFromFile(_testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.LoadDataFromFile(_trainSetPath, InputManager.DataSet.TRAIN);
         }
 
         private void LoadDatabaseFromTextBox()
         {
-            if (_testSetPath != null) MainController.ReadDataFromTextBox(TestDataTextBox.Text, _testSetPath, InputManager.DataSet.TEST);
-            if (_trainSetPath != null) MainController.ReadDataFromTextBox(TrainDataTextBox.Text, _trainSetPath, InputManager.DataSet.TRAIN);
+            if (_testSetPath != null) MainController.LoadDataFromTextBox(TestDataTextBox.Text, _testSetPath, InputManager.DataSet.TEST);
+            if (_trainSetPath != null) MainController.LoadDataFromTextBox(TrainDataTextBox.Text, _trainSetPath, InputManager.DataSet.TRAIN);
         }
 
 
@@ -547,6 +547,10 @@ namespace MP2
             SetTrainingResults(correctCount, incorrectCount, accuracy, summary);
             ResultTextBox.Text = string.Join((", "), _perceptron.Weights);
 
+            if((1-accuracy) > specs.maxError)
+            {
+                StartTraining(false);
+            }
             
         }
 

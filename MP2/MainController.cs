@@ -47,13 +47,13 @@ namespace MP2
             return data;
         }
 
-        public static void ReadDataFromFile(string filePath, DataSet dataSet)
+        public static void LoadDataFromFile(string filePath, DataSet dataSet)
         {
             InputManager.dataSets.Remove(dataSet);
             ReadData(filePath, dataSet);
         }
 
-        public static void ReadDataFromTextBox(string data, string filePath, DataSet dataSet)
+        public static void LoadDataFromTextBox(string data, string filePath, DataSet dataSet)
         {
             InputManager.dataSets.Remove(dataSet);
             var parser = new ParserCSV(filePath);
