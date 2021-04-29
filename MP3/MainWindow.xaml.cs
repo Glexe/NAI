@@ -23,12 +23,12 @@ namespace MP3
 
             if(!File.Exists(trainPath))
             {
-                RegError("Such a trainSet file does not exist");
+                RegError("Such trainSet file does not exist");
                 return;
             }
             if (!File.Exists(testPath))
             {
-                RegError("Such a testSet file does not exist");
+                RegError("Such testSet file does not exist");
                 return;
             }
 

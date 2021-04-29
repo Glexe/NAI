@@ -14,7 +14,7 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <TextBox x:Name="textBox" Height="172" Margin="171,88,171,232" TextWrapping="Wrap" BorderThickness="2" FontSize="14" FontStretch="SemiCondensed" Text="Insert the text you want to classify here">
+        <TextBox x:Name="textBox" Height="172" Margin="171,88,171,232" TextWrapping="Wrap" BorderThickness="2" FontSize="14" FontStretch="SemiCondensed" Text="Insert here the text you want to classify">
             <TextBox.Background>
                 <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                     <GradientStop Color="#FFB4B4B4" Offset="1"/>
