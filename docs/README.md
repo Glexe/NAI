@@ -26,7 +26,9 @@ Po każdej modyfikacji wag warto normalizować wektor.
 
 Nie można korzystać z gotowych bibliotek typu wektor, perceptron itp. Można korzystać z gotowych kolekcji (Array listy itp.,), klasy Math i klas do wczytywania danych
 
-
+Result:
+Auto-mapping input txt/csv files, flexible choice of considered attributes and settings ![result](mp2_result.png)
+=============
 ### MP3
 
 Celem jest napisanie programu, który pobiera następujące argumenty:
