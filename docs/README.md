@@ -45,5 +45,5 @@ Klasyfikacja języka:
 5.	Dodajemy interfejs graficzny – okienko do wpisania tekstu testowego, które po wpisaniu tekstu poda nam rozpoznany język
 
 Result:
-Сombining the UI part in c# and back-end-logic in python, using softmax and sigmoid activation function
+Сombining the UI part in c# using win-forms and algorithms logic in python, using softmax and sigmoid activation function
 =============
